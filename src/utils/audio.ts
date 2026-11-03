@@ -157,6 +157,95 @@ class SoundEffects {
       // Ignore
     }
   }
+
+  // Soothing Inhale Bell (432Hz -> 528Hz healing frequency tone)
+  playInhaleSound() {
+    if (!this.enabled) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(432, now);
+      osc.frequency.exponentialRampToValueAtTime(528, now + 1.2);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 3.9);
+    } catch {
+      // Ignore
+    }
+  }
+
+  // Grounding Exhale Bell (396Hz warm calming release)
+  playExhaleSound() {
+    if (!this.enabled) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(396, now);
+      osc.frequency.exponentialRampToValueAtTime(330, now + 2.0);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.14, now + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 5.6);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 5.8);
+    } catch {
+      // Ignore
+    }
+  }
+
+  // Session Completed gentle resolve
+  playSessionComplete() {
+    if (!this.enabled) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      [528, 660, 792, 1056].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        const start = now + i * 0.15;
+        osc.frequency.setValueAtTime(f, start);
+
+        gain.gain.setValueAtTime(0.001, start);
+        gain.gain.exponentialRampToValueAtTime(0.1, start + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 1.8);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(start);
+        osc.stop(start + 1.9);
+      });
+    } catch {
+      // Ignore
+    }
+  }
 }
 
 export const sound = new SoundEffects();
