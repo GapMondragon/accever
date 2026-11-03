@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '420px',
+      },
       fontFamily: {
         bubble: ['"Plus Jakarta Sans"', '"Fredoka"', '"Nunito"', 'system-ui', 'sans-serif'],
         display: ['"Fredoka"', '"Plus Jakarta Sans"', 'sans-serif'],

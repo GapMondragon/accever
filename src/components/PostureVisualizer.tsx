@@ -195,7 +195,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(550);
                     setSimulatedAngle(0);
                   }}
-                  className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn ${
+                  className={`min-h-[44px] py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn flex items-center justify-center ${
                     simulatedAngle === 0
                       ? 'bg-rose-600 text-white shadow-sm'
                       : 'bg-rose-100 text-rose-900 hover:bg-rose-200'
@@ -208,7 +208,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(800);
                     setSimulatedAngle(38);
                   }}
-                  className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn ${
+                  className={`min-h-[44px] py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn flex items-center justify-center ${
                     simulatedAngle === 38
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-emerald-100 text-emerald-900 hover:bg-emerald-200'
@@ -221,7 +221,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(850);
                     setSimulatedAngle(48);
                   }}
-                  className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn ${
+                  className={`min-h-[44px] py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn flex items-center justify-center ${
                     simulatedAngle === 48
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-emerald-100 text-emerald-900 hover:bg-emerald-200'
@@ -523,14 +523,14 @@ export const PostureVisualizer: React.FC = () => {
                 </div>
               </div>
 
-              {/* Pin Selection Grid - Touch-Friendly on Mobile */}
+              {/* Pin Selection Grid - Touch-Friendly on Mobile (min 44px tap target) */}
               <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 w-full justify-center mt-2">
                 <button
                   onClick={() => {
                     sound.playPop(700);
                     setActivePin('pillows');
                   }}
-                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                  className={`min-h-[44px] py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center flex items-center justify-center ${
                     activePin === 'pillows' ? 'bg-violet-600 text-white shadow-sm' : 'bg-white text-violet-800'
                   }`}
                 >
@@ -541,7 +541,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(750);
                     setActivePin('les');
                   }}
-                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                  className={`min-h-[44px] py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center flex items-center justify-center ${
                     activePin === 'les' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-800'
                   }`}
                 >
@@ -552,7 +552,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(800);
                     setActivePin('stomach');
                   }}
-                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                  className={`min-h-[44px] py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center flex items-center justify-center ${
                     activePin === 'stomach' ? 'bg-rose-600 text-white shadow-sm' : 'bg-white text-rose-800'
                   }`}
                 >
@@ -563,7 +563,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(850);
                     setActivePin('calves');
                   }}
-                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                  className={`min-h-[44px] py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center flex items-center justify-center ${
                     activePin === 'calves' ? 'bg-sky-600 text-white shadow-sm' : 'bg-white text-sky-800'
                   }`}
                 >
