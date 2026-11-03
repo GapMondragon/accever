@@ -29,7 +29,12 @@ export const PostureVisualizer: React.FC = () => {
   const isGoldenAngle = simulatedAngle >= 32 && simulatedAngle <= 48;
 
   return (
-    <div className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-8 shadow-clay-card border-none space-y-5 sm:space-y-6">
+    <div
+      id="platform-postures"
+      data-buddy-platform="true"
+      data-platform-name="Posture Visualizer"
+      className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-8 shadow-clay-card border-none space-y-5 sm:space-y-6"
+    >
       {/* Critical Anti-Reflux Safety Callout */}
       <div className="rounded-2xl bg-amber-50/90 border-2 border-amber-300/80 p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 shadow-sm">
         <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-200/90 shadow-clay-peach flex items-center justify-center text-amber-900 shrink-0 mt-0.5">

@@ -164,7 +164,12 @@ export const VisualRecoveryWorkflow: React.FC = () => {
   const [viewMode, setViewMode] = useState<'visual' | 'mermaid'>('visual');
 
   return (
-    <div className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-8 shadow-clay-card border-none space-y-5 sm:space-y-6">
+    <div
+      id="platform-workflow"
+      data-buddy-platform="true"
+      data-platform-name="Recovery Workflow"
+      className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-8 shadow-clay-card border-none space-y-5 sm:space-y-6"
+    >
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>

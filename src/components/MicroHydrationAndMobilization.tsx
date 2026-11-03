@@ -51,7 +51,12 @@ export const MicroHydrationAndMobilization: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
       {/* Phase 2: Micro-Hydration Card */}
-      <div className="rounded-[28px] sm:rounded-[32px] bg-sky-50/90 p-4 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-4 sm:space-y-5">
+      <div
+        id="platform-hydration"
+        data-buddy-platform="true"
+        data-platform-name="Hydration Protocol"
+        className="rounded-[28px] sm:rounded-[32px] bg-sky-50/90 p-4 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-4 sm:space-y-5"
+      >
         <div>
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-sky-950 shadow-clay-sky">
@@ -94,7 +99,12 @@ export const MicroHydrationAndMobilization: React.FC = () => {
       </div>
 
       {/* Phase 3: Staged Orthostatic Mobilization */}
-      <div className="rounded-[28px] sm:rounded-[32px] bg-emerald-50/90 p-4 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-4 sm:space-y-5">
+      <div
+        id="platform-mobilization"
+        data-buddy-platform="true"
+        data-platform-name="Mobilization Desk"
+        className="rounded-[28px] sm:rounded-[32px] bg-emerald-50/90 p-4 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-4 sm:space-y-5"
+      >
         <div>
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-950 shadow-clay-pill-mint">

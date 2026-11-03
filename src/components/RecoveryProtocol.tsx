@@ -9,7 +9,12 @@ export const RecoveryProtocol: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-2.5 sm:px-4 space-y-6 sm:space-y-8 mb-16 animate-fade-in">
       {/* 1. Header & Clinical Scenario Overview Banner */}
-      <div className="rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-violet-200/90 via-sky-100/90 to-emerald-100/90 p-4 sm:p-8 shadow-clay-card border-none relative overflow-hidden">
+      <div
+        id="platform-overview"
+        data-buddy-platform="true"
+        data-platform-name="Overview Banner"
+        className="rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-violet-200/90 via-sky-100/90 to-emerald-100/90 p-4 sm:p-8 shadow-clay-card border-none relative overflow-hidden"
+      >
         <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3 sm:mb-4">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-rose-200 px-3 sm:px-4 py-1 sm:py-1.5 shadow-clay-pill text-[10px] sm:text-xs font-black uppercase tracking-wider text-rose-950">
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-rose-600 animate-ping shrink-0" />
@@ -43,7 +48,12 @@ export const RecoveryProtocol: React.FC = () => {
       </div>
 
       {/* 2. Real-Time Vitals & Baseline Alert Bar (Clinical Metrics Display) */}
-      <div className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-7 shadow-clay-card space-y-4">
+      <div
+        id="platform-vitals"
+        data-buddy-platform="true"
+        data-platform-name="Vitals Dashboard"
+        className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-7 shadow-clay-card space-y-4"
+      >
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-violet-700 shrink-0" />

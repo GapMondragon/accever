@@ -1,16 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { sound } from '../utils/audio';
-import { ChevronUp, Sparkles, X } from 'lucide-react';
+import { ChevronUp, Sparkles, X, Megaphone, Cloud, Move } from 'lucide-react';
 
 export type BuddyMode = 'all' | 'random' | 'anya' | 'bond' | 'totodile' | 'cinnamoroll' | 'none';
 
-interface BuddyConfig {
+export interface BuddyConfig {
   id: string;
   name: string;
   actions: { [key: string]: string };
   phrases: string[];
-  defaultY: number; // percentage from top (e.g. 88 for floor, 15 for sky)
+  dragPhrases: string[];
+  dragAction: string;
+  landAction: string;
   isFlying?: boolean;
+  walkSpeed: number; // px/sec
+  runSpeed: number; // px/sec
 }
 
 const BUDDIES: BuddyConfig[] = [
@@ -31,7 +35,15 @@ const BUDDIES: BuddyConfig[] = [
       'Rest up well! 💖',
       'Chimera says hydrate! 🦁',
     ],
-    defaultY: 86,
+    dragPhrases: [
+      'Waku waku! Airborne Anya! ✨',
+      'No dropping Anya! 🥜',
+      'Heh, Anya is flying! 🚀',
+    ],
+    dragAction: 'shocked',
+    landAction: 'victory',
+    walkSpeed: 50,
+    runSpeed: 90,
   },
   {
     id: 'bond',
@@ -50,7 +62,15 @@ const BUDDIES: BuddyConfig[] = [
       'Good doggo watch! 🐕',
       'Borf borf! ✨',
     ],
-    defaultY: 88,
+    dragPhrases: [
+      'Borf?! Floating doggo! 🐾',
+      'Where are we going? 🐶',
+      'Careful with floof! 🔮',
+    ],
+    dragAction: 'barking',
+    landAction: 'idle',
+    walkSpeed: 38,
+    runSpeed: 75,
   },
   {
     id: 'totodile',
@@ -69,7 +89,15 @@ const BUDDIES: BuddyConfig[] = [
       'Ankle pumps! ⚡',
       'Bite the presyncope! 🦷',
     ],
-    defaultY: 87,
+    dragPhrases: [
+      'Totodile jump! 🐊',
+      'Gaooo! High in the sky! ⚡',
+      'Wheee! 💦',
+    ],
+    dragAction: 'jump',
+    landAction: 'happy_dance',
+    walkSpeed: 55,
+    runSpeed: 95,
   },
   {
     id: 'cinnamoroll',
@@ -88,8 +116,16 @@ const BUDDIES: BuddyConfig[] = [
       'Healing vibes! 💖',
       'Yay yay! ⭐',
     ],
-    defaultY: 18,
+    dragPhrases: [
+      'Floating with you~ ☁️',
+      'Up, up, and away! 🌸',
+      'Wheeeee! ⭐',
+    ],
+    dragAction: 'fly',
+    landAction: 'excited',
     isFlying: true,
+    walkSpeed: 45,
+    runSpeed: 75,
   },
 ];
 
@@ -102,14 +138,32 @@ const MODE_OPTIONS: { id: BuddyMode; label: string; icon: string; preview: strin
   { id: 'cinnamoroll', label: 'Cinnamoroll', icon: '☁️', preview: '/characters/cinnamoroll_fly.gif' },
 ];
 
-interface BuddyState {
+export interface Platform {
   id: string;
-  x: number; // percentage 0-95
-  y: number; // percentage 0-95
-  direction: 1 | -1; // 1 = right, -1 = left
+  name: string;
+  top: number;
+  left: number;
+  right: number;
+  width: number;
+  height: number;
+  type: 'section' | 'perch' | 'ground';
+}
+
+interface BuddyPhysicalState {
+  id: string;
+  x: number; // page coordinate X (px) - center
+  y: number; // page coordinate Y (px) - bottom of feet
+  vx: number; // px/sec
+  vy: number; // px/sec
+  facing: 1 | -1;
+  isDragging: boolean;
+  isGrounded: boolean;
+  groundedPlatformId: string | null;
   currentAction: string;
   speechText: string | null;
   speechTimeout: number | null;
+  sparkleUntil: number;
+  dragTilt: number; // degrees
 }
 
 export const BackgroundBuddies: React.FC = () => {
@@ -118,47 +172,248 @@ export const BackgroundBuddies: React.FC = () => {
   const [randomBuddyId, setRandomBuddyId] = useState<string>('anya');
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Initialize buddies at varied spread positions
-  const [buddies, setBuddies] = useState<BuddyState[]>([
+  // Cached platforms detected from DOM
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const platformsRef = useRef<Platform[]>([]);
+  platformsRef.current = platforms;
+
+  // Active dragged buddy ID and nearest platform below for landing indicator
+  const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const [candidatePlatform, setCandidatePlatform] = useState<Platform | null>(null);
+
+  // Pointer drag tracking ref
+  const dragTracker = useRef<{
+    pointerId: number;
+    buddyId: string;
+    startX: number;
+    startY: number;
+    startTime: number;
+    offsetX: number;
+    offsetY: number;
+    lastX: number;
+    lastY: number;
+    lastTime: number;
+    vx: number;
+    vy: number;
+    hasMoved: boolean;
+  } | null>(null);
+
+  // Physical buddies state
+  const [buddies, setBuddies] = useState<BuddyPhysicalState[]>([
     {
       id: 'anya',
-      x: 10,
-      y: 86,
-      direction: 1,
+      x: 180,
+      y: 220,
+      vx: 0,
+      vy: 0,
+      facing: 1,
+      isDragging: false,
+      isGrounded: true,
+      groundedPlatformId: 'platform-overview',
       currentAction: 'walk',
       speechText: null,
       speechTimeout: null,
+      sparkleUntil: 0,
+      dragTilt: 0,
     },
     {
       id: 'bond',
-      x: 35,
-      y: 88,
-      direction: 1,
+      x: 360,
+      y: 220,
+      vx: 0,
+      vy: 0,
+      facing: 1,
+      isDragging: false,
+      isGrounded: true,
+      groundedPlatformId: 'platform-overview',
       currentAction: 'idle',
       speechText: null,
       speechTimeout: null,
+      sparkleUntil: 0,
+      dragTilt: 0,
     },
     {
       id: 'totodile',
-      x: 65,
-      y: 87,
-      direction: -1,
+      x: 520,
+      y: 420,
+      vx: 0,
+      vy: 0,
+      facing: -1,
+      isDragging: false,
+      isGrounded: true,
+      groundedPlatformId: 'platform-vitals',
       currentAction: 'happy_dance',
       speechText: null,
       speechTimeout: null,
+      sparkleUntil: 0,
+      dragTilt: 0,
     },
     {
       id: 'cinnamoroll',
-      x: 80,
-      y: 16,
-      direction: -1,
+      x: 750,
+      y: 140,
+      vx: 0,
+      vy: 0,
+      facing: -1,
+      isDragging: false,
+      isGrounded: false,
+      groundedPlatformId: null,
       currentAction: 'fly',
       speechText: null,
       speechTimeout: null,
+      sparkleUntil: 0,
+      dragTilt: 0,
     },
   ]);
 
-  // Handle clicking outside of menu to close
+  const buddiesRef = useRef<BuddyPhysicalState[]>(buddies);
+  buddiesRef.current = buddies;
+
+  // Platform Detection Scanner using page coordinates
+  const scanPlatforms = useCallback((): Platform[] => {
+    const list: Platform[] = [];
+    const scrollY = window.scrollY;
+    const scrollX = window.scrollX;
+
+    // 1. Elements marked with data-buddy-platform or card classes
+    const elements = document.querySelectorAll<HTMLElement>(
+      '[data-buddy-platform="true"], .shadow-clay-card'
+    );
+
+    elements.forEach((el, idx) => {
+      // Exclude menu and buddy containers to avoid feedback loops
+      if (
+        el.closest('#buddy-menu-root') ||
+        el.closest('#buddy-actors-layer') ||
+        el.closest('#buddy-perch-decor')
+      ) {
+        return;
+      }
+
+      const rect = el.getBoundingClientRect();
+      // Skip hidden, zero-sized, or too small elements
+      if (rect.width < 80 || rect.height < 25) return;
+
+      const platTop = rect.top + scrollY;
+      const platLeft = rect.left + scrollX;
+
+      list.push({
+        id: el.id || `section-platform-${idx}`,
+        name: el.getAttribute('data-platform-name') || 'Ledge',
+        top: platTop,
+        left: platLeft,
+        right: platLeft + rect.width,
+        width: rect.width,
+        height: rect.height,
+        type: el.dataset.platformType === 'perch' ? 'perch' : 'section',
+      });
+    });
+
+    // 2. Document floor platform
+    const docHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      window.innerHeight
+    );
+    const docWidth = Math.max(
+      document.body.scrollWidth,
+      document.documentElement.scrollWidth,
+      window.innerWidth
+    );
+
+    list.push({
+      id: 'ground-floor',
+      name: 'Ground Floor',
+      top: docHeight - 35,
+      left: 0,
+      right: docWidth,
+      width: docWidth,
+      height: 40,
+      type: 'ground',
+    });
+
+    return list;
+  }, []);
+
+  // Sync platforms on mount, resize, scroll, and periodic ticks
+  useEffect(() => {
+    const update = () => {
+      const scanned = scanPlatforms();
+      setPlatforms(scanned);
+    };
+
+    update();
+    const handleResize = () => update();
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    // Periodic check every 1.5 seconds to account for dynamic accordion toggles
+    const interval = window.setInterval(update, 1500);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      clearInterval(interval);
+    };
+  }, [scanPlatforms]);
+
+  // Initial snap to visible platforms once detected
+  const hasInitializedPositions = useRef(false);
+  useEffect(() => {
+    if (hasInitializedPositions.current || platforms.length < 2) return;
+
+    // Match buddies to appropriate initial platforms
+    const overviewPlat = platforms.find((p) => p.id === 'platform-overview') || platforms[0];
+    const vitalsPlat = platforms.find((p) => p.id === 'platform-vitals') || platforms[1] || overviewPlat;
+    const skyPerch = platforms.find((p) => p.id === 'perch-cloud');
+
+    setBuddies((prev) =>
+      prev.map((b) => {
+        if (b.id === 'anya') {
+          return {
+            ...b,
+            x: overviewPlat.left + Math.min(120, overviewPlat.width * 0.25),
+            y: overviewPlat.top,
+            isGrounded: true,
+            groundedPlatformId: overviewPlat.id,
+          };
+        }
+        if (b.id === 'bond') {
+          return {
+            ...b,
+            x: overviewPlat.left + Math.min(260, overviewPlat.width * 0.55),
+            y: overviewPlat.top,
+            isGrounded: true,
+            groundedPlatformId: overviewPlat.id,
+          };
+        }
+        if (b.id === 'totodile') {
+          return {
+            ...b,
+            x: vitalsPlat.left + Math.min(180, vitalsPlat.width * 0.4),
+            y: vitalsPlat.top,
+            isGrounded: true,
+            groundedPlatformId: vitalsPlat.id,
+          };
+        }
+        if (b.id === 'cinnamoroll') {
+          const target = skyPerch || overviewPlat;
+          return {
+            ...b,
+            x: target.left + target.width * 0.5,
+            y: target.top - 18,
+            isGrounded: false,
+            groundedPlatformId: null,
+          };
+        }
+        return b;
+      })
+    );
+
+    hasInitializedPositions.current = true;
+  }, [platforms]);
+
+  // Handle clicking outside menu to dismiss
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -173,15 +428,13 @@ export const BackgroundBuddies: React.FC = () => {
     };
   }, [menuOpen]);
 
-  // Periodic random buddy picker when in 'random' mode
+  // Periodic random companion switcher when mode === 'random'
   useEffect(() => {
     if (mode !== 'random') return;
 
-    // Pick initial random buddy
     const allIds = BUDDIES.map((b) => b.id);
     setRandomBuddyId(allIds[Math.floor(Math.random() * allIds.length)]);
 
-    // Rotate every 20 seconds
     const interval = window.setInterval(() => {
       setRandomBuddyId((prev) => {
         const remaining = allIds.filter((id) => id !== prev);
@@ -192,99 +445,417 @@ export const BackgroundBuddies: React.FC = () => {
     return () => clearInterval(interval);
   }, [mode]);
 
-  // Filter which buddies are visible
-  const visibleBuddies = buddies.filter((buddy) => {
-    if (mode === 'none') return false;
-    if (mode === 'all') return true;
-    if (mode === 'random') return buddy.id === randomBuddyId;
-    return buddy.id === mode;
-  });
-
-  // Animation and wandering ticker
+  // Random behavior and walk state switcher every 4 seconds
   useEffect(() => {
     if (mode === 'none') return;
 
-    // Movement loop (runs every 60ms)
-    const moveInterval = window.setInterval(() => {
+    const interval = window.setInterval(() => {
       setBuddies((prev) =>
         prev.map((buddy) => {
-          const cfg = BUDDIES.find((b) => b.id === buddy.id);
-          if (!cfg) return buddy;
-
-          const isMoving =
-            buddy.currentAction === 'walk' ||
-            buddy.currentAction === 'run' ||
-            buddy.currentAction === 'hop' ||
-            buddy.currentAction === 'fly';
-
-          if (!isMoving) return buddy;
-
-          const speed =
-            buddy.currentAction === 'run'
-              ? 0.4
-              : buddy.currentAction === 'fly'
-              ? 0.25
-              : 0.15;
-
-          let newX = buddy.x + speed * buddy.direction;
-          let newDir = buddy.direction;
-
-          // Turn around at viewport boundaries
-          if (newX > 92) {
-            newX = 92;
-            newDir = -1;
-          } else if (newX < 4) {
-            newX = 4;
-            newDir = 1;
-          }
-
-          // Subtle floating wave for flying buddies
-          let newY = buddy.y;
-          if (cfg.isFlying) {
-            newY = cfg.defaultY + Math.sin(Date.now() / 800) * 4;
-          }
-
-          return {
-            ...buddy,
-            x: newX,
-            y: newY,
-            direction: newDir,
-          };
-        })
-      );
-    }, 60);
-
-    // Random action switcher (every 4.5 seconds with 45% chance per buddy)
-    const actionInterval = window.setInterval(() => {
-      setBuddies((prev) =>
-        prev.map((buddy) => {
+          if (buddy.isDragging) return buddy;
           if (Math.random() > 0.45) return buddy;
 
           const cfg = BUDDIES.find((b) => b.id === buddy.id);
           if (!cfg) return buddy;
 
           const actionKeys = Object.keys(cfg.actions);
-          const nextAction =
-            actionKeys[Math.floor(Math.random() * actionKeys.length)];
-
-          const reverseDir = Math.random() > 0.6 ? ((buddy.direction * -1) as 1 | -1) : buddy.direction;
+          const nextAction = actionKeys[Math.floor(Math.random() * actionKeys.length)];
+          const flip = Math.random() > 0.65 ? ((buddy.facing * -1) as 1 | -1) : buddy.facing;
 
           return {
             ...buddy,
             currentAction: nextAction,
-            direction: reverseDir,
+            facing: flip,
           };
         })
       );
-    }, 4500);
+    }, 4000);
 
-    return () => {
-      clearInterval(moveInterval);
-      clearInterval(actionInterval);
-    };
+    return () => clearInterval(interval);
   }, [mode]);
 
-  // Pet / Click interaction
+  // Main 60fps Physics & Mathematics Simulation Loop
+  const lastTimeRef = useRef<number>(performance.now());
+  useEffect(() => {
+    if (mode === 'none') return;
+
+    let animId: number;
+
+    const physicsLoop = (now: number) => {
+      const dt = Math.min((now - lastTimeRef.current) / 1000, 0.05); // Cap to 50ms to prevent tunneling
+      lastTimeRef.current = now;
+
+      const currentPlatforms = platformsRef.current;
+      const docWidth = Math.max(
+        document.body.scrollWidth,
+        document.documentElement.scrollWidth,
+        window.innerWidth
+      );
+
+      setBuddies((prev) =>
+        prev.map((buddy) => {
+          if (buddy.isDragging) return buddy;
+
+          const cfg = BUDDIES.find((b) => b.id === buddy.id);
+          if (!cfg) return buddy;
+
+          // 1. Case: Grounded on an active platform
+          if (buddy.isGrounded && buddy.groundedPlatformId) {
+            const platform = currentPlatforms.find((p) => p.id === buddy.groundedPlatformId);
+
+            if (platform) {
+              // Surface height lock (handles page accordion/layout changes)
+              let newY = platform.top;
+              let newX = buddy.x;
+              let newFacing = buddy.facing;
+
+              // Check if walking
+              const isMoving =
+                buddy.currentAction === 'walk' ||
+                buddy.currentAction === 'run' ||
+                buddy.currentAction === 'hop' ||
+                buddy.currentAction === 'attack';
+
+              if (isMoving) {
+                const speed =
+                  buddy.currentAction === 'run' ? cfg.runSpeed : cfg.walkSpeed;
+                newX += speed * buddy.facing * dt;
+
+                // Mathematical Edge Detection: bounce when reaching platform boundaries
+                const minX = platform.left + 22;
+                const maxX = platform.right - 22;
+
+                if (newX <= minX) {
+                  newX = minX;
+                  newFacing = 1;
+                } else if (newX >= maxX) {
+                  newX = maxX;
+                  newFacing = -1;
+                }
+              }
+
+              // Subtle hovering for flying companions resting on perches
+              if (cfg.isFlying && buddy.currentAction === 'fly') {
+                newY = platform.top - 14 + Math.sin(now / 500) * 5;
+              }
+
+              return {
+                ...buddy,
+                x: newX,
+                y: newY,
+                vx: 0,
+                vy: 0,
+                facing: newFacing,
+              };
+            } else {
+              // Platform removed or collapsed: drop character into physics
+              return {
+                ...buddy,
+                isGrounded: false,
+                groundedPlatformId: null,
+              };
+            }
+          }
+
+          // 2. Case: Flying buddy in open air (Cinnamoroll)
+          if (cfg.isFlying) {
+            let newX = buddy.x + buddy.facing * (cfg.walkSpeed * 0.7) * dt;
+            let newFacing = buddy.facing;
+
+            // Float smoothly in sine wave
+            let newY = buddy.y + Math.sin(now / 700) * 0.75 + buddy.vy * dt;
+            const newVy = buddy.vy * Math.pow(0.85, dt * 60);
+
+            // Turn around at document edges
+            if (newX < 35) {
+              newX = 35;
+              newFacing = 1;
+            } else if (newX > docWidth - 35) {
+              newX = docWidth - 35;
+              newFacing = -1;
+            }
+
+            return {
+              ...buddy,
+              x: newX,
+              y: newY,
+              vy: newVy,
+              facing: newFacing,
+            };
+          }
+
+          // 3. Case: Airborne with Gravity (Continuous Collision Detection Math)
+          const GRAVITY = 1150; // px/s²
+          const newVy = buddy.vy + GRAVITY * dt;
+          const airDrag = Math.pow(0.95, dt * 60);
+          const newVx = buddy.vx * airDrag;
+
+          const oldY = buddy.y;
+          const proposedY = oldY + newVy * dt;
+          let proposedX = buddy.x + newVx * dt;
+
+          // Screen horizontal clamping
+          if (proposedX < 30) proposedX = 30;
+          if (proposedX > docWidth - 30) proposedX = docWidth - 30;
+
+          // Raycast / Segment intersection with all platform horizontal ledges
+          let landedPlatform: Platform | null = null;
+
+          for (const plat of currentPlatforms) {
+            // Foot position within platform horizontal footprint
+            const isHorizontallyOver =
+              plat.left - 15 <= proposedX && proposedX <= plat.right + 15;
+
+            // Vertical collision: old position above or at top, proposed position at or below top
+            const didCrossSurface =
+              oldY <= plat.top + 10 && proposedY >= plat.top;
+
+            if (isHorizontallyOver && didCrossSurface && newVy >= 0) {
+              if (!landedPlatform || plat.top < landedPlatform.top) {
+                landedPlatform = plat;
+              }
+            }
+          }
+
+          if (landedPlatform) {
+            // Touchdown on platform!
+            sound.playSquish();
+            return {
+              ...buddy,
+              x: proposedX,
+              y: landedPlatform.top,
+              vx: 0,
+              vy: 0,
+              isGrounded: true,
+              groundedPlatformId: landedPlatform.id,
+              currentAction: cfg.landAction,
+              sparkleUntil: Date.now() + 800,
+            };
+          }
+
+          return {
+            ...buddy,
+            x: proposedX,
+            y: proposedY,
+            vx: newVx,
+            vy: newVy,
+          };
+        })
+      );
+
+      animId = requestAnimationFrame(physicsLoop);
+    };
+
+    animId = requestAnimationFrame(physicsLoop);
+    return () => cancelAnimationFrame(animId);
+  }, [mode]);
+
+  // Pointer Down: Grab character
+  const handlePointerDown = (buddyId: string, e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const buddy = buddies.find((b) => b.id === buddyId);
+    if (!buddy) return;
+
+    sound.playSquish();
+
+    const pageX = e.clientX + window.scrollX;
+    const pageY = e.clientY + window.scrollY;
+
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      // Ignored if capture unsupported
+    }
+
+    dragTracker.current = {
+      pointerId: e.pointerId,
+      buddyId,
+      startX: pageX,
+      startY: pageY,
+      startTime: performance.now(),
+      offsetX: pageX - buddy.x,
+      offsetY: pageY - buddy.y,
+      lastX: buddy.x,
+      lastY: buddy.y,
+      lastTime: performance.now(),
+      vx: 0,
+      vy: 0,
+      hasMoved: false,
+    };
+
+    setActiveDragId(buddyId);
+
+    const cfg = BUDDIES.find((b) => b.id === buddyId);
+    const dragPhrase = cfg?.dragPhrases[Math.floor(Math.random() * cfg.dragPhrases.length)];
+
+    setBuddies((prev) =>
+      prev.map((b) => {
+        if (b.id !== buddyId) return b;
+        return {
+          ...b,
+          isDragging: true,
+          isGrounded: false,
+          groundedPlatformId: null,
+          currentAction: cfg?.dragAction || 'shocked',
+          speechText: dragPhrase || 'Wheee! ✨',
+          dragTilt: 0,
+        };
+      })
+    );
+  };
+
+  // Pointer Move: Drag with physics tracking and auto-scrolling
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const tracker = dragTracker.current;
+    if (!tracker || tracker.pointerId !== e.pointerId) return;
+
+    const pageX = e.clientX + window.scrollX;
+    const pageY = e.clientY + window.scrollY;
+    const now = performance.now();
+    const dt = Math.max((now - tracker.lastTime) / 1000, 0.008);
+
+    const distFromStart = Math.hypot(pageX - tracker.startX, pageY - tracker.startY);
+    if (distFromStart > 5) {
+      tracker.hasMoved = true;
+    }
+
+    const currentX = pageX - tracker.offsetX;
+    const currentY = pageY - tracker.offsetY;
+
+    // Measure throw velocity with exponential smoothing
+    const instVx = (currentX - tracker.lastX) / dt;
+    const instVy = (currentY - tracker.lastY) / dt;
+    tracker.vx = 0.5 * tracker.vx + 0.5 * instVx;
+    tracker.vy = 0.5 * tracker.vy + 0.5 * instVy;
+    tracker.lastX = currentX;
+    tracker.lastY = currentY;
+    tracker.lastTime = now;
+
+    // Fluid drag tilt math
+    const dragTilt = Math.max(-20, Math.min(20, tracker.vx * 0.035));
+
+    // Responsive Edge Viewport Auto-Scroll (Mobile & Desktop)
+    if (e.clientY < 75) {
+      window.scrollBy({ top: -Math.min(16, (75 - e.clientY) / 3), behavior: 'auto' });
+    } else if (e.clientY > window.innerHeight - 75) {
+      window.scrollBy({
+        top: Math.min(16, (e.clientY - (window.innerHeight - 75)) / 3),
+        behavior: 'auto',
+      });
+    }
+
+    // Raycast: calculate candidate platform directly beneath character
+    const underPlatforms = platformsRef.current.filter(
+      (p) => p.left - 15 <= currentX && currentX <= p.right + 15 && p.top >= currentY - 20
+    );
+    underPlatforms.sort((a, b) => a.top - b.top);
+    setCandidatePlatform(underPlatforms[0] || null);
+
+    setBuddies((prev) =>
+      prev.map((b) => {
+        if (b.id !== tracker.buddyId) return b;
+        return {
+          ...b,
+          x: currentX,
+          y: currentY,
+          dragTilt,
+        };
+      })
+    );
+  };
+
+  // Pointer Up: Drop or Pet
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const tracker = dragTracker.current;
+    if (!tracker || tracker.pointerId !== e.pointerId) return;
+
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {
+      // Ignored
+    }
+
+    const duration = performance.now() - tracker.startTime;
+    const wasClick = !tracker.hasMoved && duration < 380;
+    const buddyId = tracker.buddyId;
+    const cfg = BUDDIES.find((b) => b.id === buddyId);
+
+    dragTracker.current = null;
+    setActiveDragId(null);
+    setCandidatePlatform(null);
+
+    if (wasClick) {
+      // It's a Pet / Tap interaction!
+      handlePokeBuddy(buddyId);
+      setBuddies((prev) =>
+        prev.map((b) => (b.id === buddyId ? { ...b, isDragging: false, dragTilt: 0 } : b))
+      );
+      return;
+    }
+
+    // It was a drag & drop release!
+    sound.playPop(850);
+
+    const buddy = buddiesRef.current.find((b) => b.id === buddyId);
+    if (!buddy) return;
+
+    // Check if directly dropped onto a platform ledge (within 35px threshold)
+    const candidates = platformsRef.current.filter(
+      (p) =>
+        p.left - 20 <= buddy.x &&
+        buddy.x <= p.right + 20 &&
+        Math.abs(buddy.y - p.top) <= 35
+    );
+
+    candidates.sort((a, b) => Math.abs(buddy.y - a.top) - Math.abs(buddy.y - b.top));
+    const directSnap = candidates[0];
+
+    if (directSnap) {
+      // Immediate clean snap to platform
+      sound.playSquish();
+      setBuddies((prev) =>
+        prev.map((b) => {
+          if (b.id !== buddyId) return b;
+          return {
+            ...b,
+            y: directSnap.top,
+            vx: 0,
+            vy: 0,
+            isDragging: false,
+            isGrounded: true,
+            groundedPlatformId: directSnap.id,
+            currentAction: cfg?.landAction || 'idle',
+            speechText: `Landed on ${directSnap.name}! ✨`,
+            sparkleUntil: Date.now() + 850,
+            dragTilt: 0,
+          };
+        })
+      );
+    } else {
+      // Release into ballistic parabolic physics
+      const clampedVx = Math.max(-450, Math.min(450, tracker.vx));
+      const clampedVy = Math.max(-350, Math.min(350, tracker.vy));
+
+      setBuddies((prev) =>
+        prev.map((b) => {
+          if (b.id !== buddyId) return b;
+          return {
+            ...b,
+            vx: clampedVx,
+            vy: clampedVy,
+            isDragging: false,
+            isGrounded: false,
+            groundedPlatformId: null,
+            dragTilt: 0,
+          };
+        })
+      );
+    }
+  };
+
+  // Pet / Click interaction for speech & fun reactions
   const handlePokeBuddy = (buddyId: string) => {
     sound.playPop(700 + Math.random() * 300);
 
@@ -299,8 +870,7 @@ export const BackgroundBuddies: React.FC = () => {
         else if (buddyId === 'totodile') specialAction = 'happy_dance';
         else if (buddyId === 'cinnamoroll') specialAction = 'excited';
 
-        const randomPhrase =
-          cfg.phrases[Math.floor(Math.random() * cfg.phrases.length)];
+        const randomPhrase = cfg.phrases[Math.floor(Math.random() * cfg.phrases.length)];
 
         if (b.speechTimeout) {
           window.clearTimeout(b.speechTimeout);
@@ -324,52 +894,189 @@ export const BackgroundBuddies: React.FC = () => {
     );
   };
 
+  // "Call Buddies to Screen" (Whistle feature)
+  const handleCallBuddies = () => {
+    sound.playChime();
+
+    const currentScrollY = window.scrollY;
+    const viewBottom = currentScrollY + window.innerHeight;
+
+    // Find platforms currently visible on screen
+    const visiblePlatforms = platformsRef.current.filter(
+      (p) => p.top >= currentScrollY + 40 && p.top <= viewBottom - 60
+    );
+
+    const targetPool =
+      visiblePlatforms.length > 0 ? visiblePlatforms : platformsRef.current.slice(0, 3);
+
+    setBuddies((prev) =>
+      prev.map((b, index) => {
+        const plat = targetPool[index % targetPool.length] || targetPool[0];
+        const cfg = BUDDIES.find((item) => item.id === b.id);
+        const offsetX = plat.left + Math.min(plat.width * 0.2 + index * 80, plat.width - 40);
+
+        return {
+          ...b,
+          x: offsetX,
+          y: plat.top - (cfg?.isFlying ? 15 : 0),
+          vx: 0,
+          vy: 0,
+          isDragging: false,
+          isGrounded: !cfg?.isFlying,
+          groundedPlatformId: !cfg?.isFlying ? plat.id : null,
+          currentAction: cfg?.landAction || 'victory',
+          speechText: 'We are here! ✨',
+          sparkleUntil: Date.now() + 1000,
+        };
+      })
+    );
+
+    setMenuOpen(false);
+  };
+
+  const visibleBuddies = buddies.filter((buddy) => {
+    if (mode === 'none') return false;
+    if (mode === 'all') return true;
+    if (mode === 'random') return buddy.id === randomBuddyId;
+    return buddy.id === mode;
+  });
+
   const currentOption = MODE_OPTIONS.find((opt) => opt.id === mode);
 
   return (
     <>
-      {/* Background Buddies Layer */}
+      {/* Dedicated Floating Visual Perches / Platforms */}
+      <div id="buddy-perch-decor" className="pointer-events-none select-none">
+        {/* 1. Sky Cloud Perch (Top Right) */}
+        <div
+          id="perch-cloud"
+          data-buddy-platform="true"
+          data-platform-name="Sky Cloud Perch"
+          data-platform-type="perch"
+          style={{ top: '150px', right: '28px' }}
+          className="absolute z-20 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-clay-pill border-2 border-sky-100/80 text-sky-950 font-black text-xs animate-wave-sway pointer-events-auto cursor-default"
+          title="Drag a buddy here to perch on the cloud!"
+        >
+          <Cloud className="w-3.5 h-3.5 text-sky-500 fill-sky-200" />
+          <span>☁️ Sky Perch</span>
+        </div>
+
+        {/* 2. Healing Rest Shelf (Mid Left) */}
+        <div
+          id="perch-shelf"
+          data-buddy-platform="true"
+          data-platform-name="Healing Rest Shelf"
+          data-platform-type="perch"
+          style={{ top: '1050px', left: '20px' }}
+          className="absolute z-20 hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-clay-pill border-2 border-emerald-100/80 text-emerald-950 font-black text-xs animate-wave-sway pointer-events-auto cursor-default"
+          title="Drag a buddy here to rest!"
+        >
+          <span>🌸 Healing Shelf</span>
+        </div>
+
+        {/* 3. Star Ledge (Lower Right) */}
+        <div
+          id="perch-star"
+          data-buddy-platform="true"
+          data-platform-name="Star Ledge"
+          data-platform-type="perch"
+          style={{ top: '1750px', right: '24px' }}
+          className="absolute z-20 hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-clay-pill border-2 border-amber-100/80 text-amber-950 font-black text-xs animate-wave-sway pointer-events-auto cursor-default"
+          title="Drag a buddy here!"
+        >
+          <span>⭐ Star Ledge</span>
+        </div>
+      </div>
+
+      {/* Landing Target Visual Guide Ray while Dragging */}
+      {activeDragId && candidatePlatform && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${candidatePlatform.left}px`,
+            top: `${candidatePlatform.top - 4}px`,
+            width: `${candidatePlatform.width}px`,
+          }}
+          className="h-1.5 bg-gradient-to-r from-rose-400 via-violet-400 to-sky-400 rounded-full shadow-[0_0_14px_rgba(244,63,94,0.7)] animate-pulse pointer-events-none z-40 transition-all duration-150"
+        >
+          <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-white/95 text-rose-950 font-black text-[11px] px-3 py-0.5 rounded-full shadow-clay-pill border border-rose-200 whitespace-nowrap flex items-center gap-1.5">
+            <span>🎯</span>
+            <span>Drop onto {candidatePlatform.name}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Draggable Character Layer (Page Coordinates) */}
       {mode !== 'none' && (
-        <div className="fixed inset-0 pointer-events-none z-30 overflow-hidden select-none">
+        <div
+          id="buddy-actors-layer"
+          className="absolute inset-0 pointer-events-none z-30 select-none overflow-visible"
+        >
           {visibleBuddies.map((buddy) => {
             const cfg = BUDDIES.find((b) => b.id === buddy.id);
             if (!cfg) return null;
 
             const gifSrc = cfg.actions[buddy.currentAction] || cfg.actions.idle;
+            const isSparkling = Date.now() < buddy.sparkleUntil;
 
             return (
               <div
                 key={buddy.id}
+                onPointerDown={(e) => handlePointerDown(buddy.id, e)}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
                 style={{
-                  left: `${buddy.x}%`,
-                  top: `${buddy.y}%`,
-                  transform: 'translate(-50%, -50%)',
+                  left: `${buddy.x}px`,
+                  top: `${buddy.y}px`,
+                  transform: `translate(-50%, -100%) rotate(${buddy.dragTilt}deg)`,
+                  touchAction: 'none',
                 }}
-                className="absolute pointer-events-auto transition-transform duration-100 ease-linear cursor-pointer group"
-                onClick={() => handlePokeBuddy(buddy.id)}
-                title={`Click to pet ${cfg.name}!`}
+                className={`absolute pointer-events-auto cursor-grab active:cursor-grabbing transition-shadow group ${
+                  buddy.isDragging ? 'z-50 scale-110' : 'z-30'
+                }`}
+                title={`Drag or click ${cfg.name}! Place on any card or platform.`}
               >
+                {/* Landing Sparkle Puff Animation */}
+                {isSparkling && (
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none animate-ping">
+                    <span className="text-xl">✨</span>
+                  </div>
+                )}
+
                 {/* Speech Bubble */}
                 {buddy.speechText && (
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white/95 text-violet-950 font-black text-[11px] sm:text-xs px-2.5 py-1 rounded-2xl shadow-clay-pill border border-violet-100 animate-bounce z-50">
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white/95 text-violet-950 font-black text-[11px] sm:text-xs px-2.5 py-1 rounded-2xl shadow-clay-pill border border-violet-100 animate-bounce z-50 pointer-events-none">
                     {buddy.speechText}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white/95" />
                   </div>
                 )}
 
-                {/* Character GIF */}
+                {/* Drag Indicator Tooltip on Hover */}
+                {!buddy.isDragging && (
+                  <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full pointer-events-none whitespace-nowrap flex items-center gap-1">
+                    <Move className="w-2.5 h-2.5" />
+                    <span>Drag me</span>
+                  </div>
+                )}
+
+                {/* Character GIF Container */}
                 <div
-                  className="transition-transform duration-200 group-hover:scale-110 group-active:scale-95 touch-manipulation"
+                  className="transition-transform duration-150 group-active:scale-95"
                   style={{
-                    transform: `scaleX(${buddy.direction})`,
-                    touchAction: 'pan-y',
+                    transform: `scaleX(${buddy.facing})`,
                   }}
                 >
                   <img
                     src={gifSrc}
                     alt={`${cfg.name} (${buddy.currentAction})`}
-                    className="h-14 sm:h-20 w-auto max-w-[90px] sm:max-w-[125px] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] image-pixelated pointer-events-none"
+                    className={`h-14 sm:h-20 w-auto max-w-[90px] sm:max-w-[125px] object-contain image-pixelated pointer-events-none ${
+                      buddy.isDragging
+                        ? 'drop-shadow-[0_16px_20px_rgba(0,0,0,0.22)]'
+                        : 'drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)]'
+                    }`}
                     loading="eager"
+                    draggable={false}
                   />
                 </div>
               </div>
@@ -378,15 +1085,15 @@ export const BackgroundBuddies: React.FC = () => {
         </div>
       )}
 
-      {/* Floating Character Chooser Button & Menu in Bottom Corner */}
-      <div ref={menuRef} className="fixed bottom-4 right-4 z-40 touch-manipulation">
+      {/* Floating Character Chooser & Physics Control Menu */}
+      <div id="buddy-menu-root" ref={menuRef} className="fixed bottom-4 right-4 z-40 touch-manipulation">
         {/* Popover Selection Menu */}
         {menuOpen && (
-          <div className="absolute bottom-14 sm:bottom-16 right-0 mb-2 w-60 sm:w-68 max-h-[75vh] overflow-y-auto rounded-[28px] bg-white/95 backdrop-blur-md p-3 shadow-clay-card border border-rose-100 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="absolute bottom-14 sm:bottom-16 right-0 mb-2 w-64 sm:w-72 max-h-[80vh] overflow-y-auto rounded-[28px] bg-white/95 backdrop-blur-md p-3 shadow-clay-card border border-rose-100 animate-in fade-in slide-in-from-bottom-2 duration-200">
             <div className="flex items-center justify-between px-2.5 py-1 mb-2 border-b border-rose-100/70">
               <span className="text-xs font-black uppercase tracking-wider text-rose-950 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-rose-500" />
-                Choose Character
+                Companion Buddies
               </span>
               <button
                 onClick={() => setMenuOpen(false)}
@@ -396,6 +1103,26 @@ export const BackgroundBuddies: React.FC = () => {
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
+
+            {/* Quick Physics Helper Note */}
+            <div className="mb-2.5 px-2.5 py-1.5 rounded-xl bg-violet-50 text-[10px] font-bold text-violet-900 border border-violet-100/80 leading-relaxed flex items-center gap-1.5">
+              <Move className="w-3 h-3 text-violet-600 shrink-0" />
+              <span>
+                <strong>Drag & Drop</strong> any character onto website cards and platforms!
+              </span>
+            </div>
+
+            {/* Call Buddies to Screen Button */}
+            {mode !== 'none' && (
+              <button
+                onClick={handleCallBuddies}
+                className="w-full mb-2 min-h-[38px] px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-200 to-rose-200 hover:from-violet-300 hover:to-rose-300 text-violet-950 text-xs font-black shadow-clay-pill flex items-center justify-center gap-2 transition-all active:scale-95"
+                title="Call all companions to land on platforms in your view"
+              >
+                <Megaphone className="w-3.5 h-3.5 text-rose-700" />
+                <span>Call Buddies Here 📣</span>
+              </button>
+            )}
 
             {/* Character Options List */}
             <div className="space-y-1.5">
@@ -463,7 +1190,7 @@ export const BackgroundBuddies: React.FC = () => {
               ? 'bg-rose-100 text-rose-950 hover:bg-rose-200'
               : 'bg-stone-200 text-stone-600 hover:bg-stone-300'
           }`}
-          title="Choose character companions"
+          title="Choose and interact with character companions"
         >
           <span className="text-sm">{currentOption?.icon || '🐾'}</span>
           <span className="font-extrabold">

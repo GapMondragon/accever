@@ -434,7 +434,12 @@ export const VagalBreathingCoach: React.FC = () => {
   return (
     <>
       {/* Standard In-Dashboard Card */}
-      <div className="rounded-[32px] bg-white/90 p-6 sm:p-8 shadow-clay-card border-none">
+      <div
+        id="platform-breathing"
+        data-buddy-platform="true"
+        data-platform-name="Breathing Coach"
+        className="rounded-[32px] bg-white/90 p-6 sm:p-8 shadow-clay-card border-none"
+      >
         {content}
       </div>
 
