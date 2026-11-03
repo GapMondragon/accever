@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Header } from './components/Header';
 import { RecoveryProtocol } from './components/RecoveryProtocol';
 import { Footer } from './components/Footer';
+import { BackgroundBuddies } from './components/BackgroundBuddies';
 
 // Note: Duo Lounge components (Hero, OpenWhenLetters, ReasonsBento, DateNightRoulette, ClayRadio)
 // are kept in src/components/ ready to be unhidden tomorrow.
@@ -39,6 +40,9 @@ export function App() {
       <div className="fixed top-12 left-10 w-96 h-96 rounded-full bg-violet-200/40 blur-3xl pointer-events-none -z-10" />
       <div className="fixed top-1/3 right-10 w-96 h-96 rounded-full bg-emerald-200/35 blur-3xl pointer-events-none -z-10" />
       <div className="fixed bottom-10 left-1/4 w-96 h-96 rounded-full bg-sky-200/40 blur-3xl pointer-events-none -z-10" />
+
+      {/* Wandering Character Companions (Anya, Bond, Totodile, Cinnamoroll) */}
+      <BackgroundBuddies />
 
       {/* Floating Emojis Layer */}
       {floatingItems.map((item) => (
