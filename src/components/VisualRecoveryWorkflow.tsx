@@ -164,15 +164,15 @@ export const VisualRecoveryWorkflow: React.FC = () => {
   const [viewMode, setViewMode] = useState<'visual' | 'mermaid'>('visual');
 
   return (
-    <div className="rounded-[32px] bg-white/90 p-5 sm:p-8 shadow-clay-card border-none space-y-6">
+    <div className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-8 shadow-clay-card border-none space-y-5 sm:space-y-6">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-xl bg-violet-200 text-violet-900 flex items-center justify-center text-sm shadow-clay-pill">
+            <span className="w-8 h-8 rounded-xl bg-violet-200 text-violet-900 flex items-center justify-center text-sm shadow-clay-pill shrink-0">
               🧭
             </span>
-            <h3 className="text-lg sm:text-xl font-black text-clay-indigo-dark">
+            <h3 className="text-base sm:text-xl font-black text-clay-indigo-dark">
               Visual Clinical Recovery Roadmap
             </h3>
           </div>
@@ -182,13 +182,13 @@ export const VisualRecoveryWorkflow: React.FC = () => {
         </div>
 
         {/* View Mode Toggle: Interactive Visual Stepper vs Technical Mermaid Code */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-violet-100/80 clay-debossed">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 p-1 rounded-2xl bg-violet-100/80 clay-debossed w-full sm:w-auto shrink-0">
           <button
             onClick={() => {
               sound.playPop(700);
               setViewMode('visual');
             }}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn ${
+            className={`py-2 px-3 sm:px-3.5 sm:py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn text-center ${
               viewMode === 'visual'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
@@ -201,7 +201,7 @@ export const VisualRecoveryWorkflow: React.FC = () => {
               sound.playPop(750);
               setViewMode('mermaid');
             }}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn ${
+            className={`flex items-center justify-center gap-1 py-2 px-3 sm:px-3 sm:py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn text-center ${
               viewMode === 'mermaid'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'

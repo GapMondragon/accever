@@ -29,18 +29,18 @@ export const PostureVisualizer: React.FC = () => {
   const isGoldenAngle = simulatedAngle >= 32 && simulatedAngle <= 48;
 
   return (
-    <div className="rounded-[32px] bg-white/90 p-5 sm:p-8 shadow-clay-card border-none space-y-6">
+    <div className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-8 shadow-clay-card border-none space-y-5 sm:space-y-6">
       {/* Critical Anti-Reflux Safety Callout */}
-      <div className="rounded-2xl bg-amber-50/90 border-2 border-amber-300/80 p-4 sm:p-5 flex items-start gap-3 sm:gap-4 shadow-sm">
-        <div className="w-10 h-10 rounded-xl bg-amber-200/90 shadow-clay-peach flex items-center justify-center text-amber-900 shrink-0 mt-0.5">
-          <ShieldAlert className="w-5 h-5 text-amber-800" />
+      <div className="rounded-2xl bg-amber-50/90 border-2 border-amber-300/80 p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 shadow-sm">
+        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-200/90 shadow-clay-peach flex items-center justify-center text-amber-900 shrink-0 mt-0.5">
+          <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-amber-800" />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200 px-2.5 py-0.5 rounded-full">
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200 px-2.5 py-0.5 rounded-full">
               Non-Negotiable Safety Rule
             </span>
-            <span className="text-xs font-black text-rose-700">
+            <span className="text-[11px] sm:text-xs font-black text-rose-700">
               STRICTLY NO FLAT SUPINE (0°) ⛔
             </span>
           </div>
@@ -51,45 +51,45 @@ export const PostureVisualizer: React.FC = () => {
       </div>
 
       {/* Header and 3-Tab Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg sm:text-xl font-black text-clay-indigo-dark">
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 className="text-base sm:text-xl font-black text-clay-indigo-dark">
               Recommended Recovery Postures
             </h3>
-            <button
-              onClick={() => {
-                sound.playPop(650);
-                setShowAnatomyExplainer(!showAnatomyExplainer);
-              }}
-              className="text-xs font-bold text-violet-700 bg-violet-100 hover:bg-violet-200 px-2.5 py-1 rounded-full flex items-center gap-1 transition-all clay-btn"
-              title="Toggle Clinical Mechanics"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span>{showAnatomyExplainer ? 'Hide Science' : 'Why This Works?'}</span>
-            </button>
+            <p className="text-xs font-bold text-violet-700/80">
+              Interactive anatomical simulations with live fluid dynamics and inspection pins.
+            </p>
           </div>
-          <p className="text-xs font-bold text-violet-700/80">
-            Interactive anatomical simulations with live fluid dynamics and inspection pins.
-          </p>
+          <button
+            onClick={() => {
+              sound.playPop(650);
+              setShowAnatomyExplainer(!showAnatomyExplainer);
+            }}
+            className="text-[11px] sm:text-xs font-bold text-violet-700 bg-violet-100 hover:bg-violet-200 px-2.5 py-1 rounded-full flex items-center gap-1 transition-all clay-btn shrink-0"
+            title="Toggle Clinical Mechanics"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>{showAnatomyExplainer ? 'Hide Science' : 'Why This Works?'}</span>
+          </button>
         </div>
 
-        {/* Posture Navigation Pills */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-violet-100/80 clay-debossed overflow-x-auto">
+        {/* Posture Navigation Pills - Fully Responsive & Finger-Friendly on Mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 p-1.5 rounded-2xl bg-violet-100/80 clay-debossed">
           <button
             onClick={() => {
               sound.playPop(700);
               setSelectedPosture('fowlers');
               setActivePin('les');
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 clay-btn ${
+            className={`px-3 py-2.5 sm:py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 clay-btn ${
               selectedPosture === 'fowlers'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            1. Modified Fowler's Simulator
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <span className="truncate">1. Fowler's (35°–45°)</span>
           </button>
           <button
             onClick={() => {
@@ -97,14 +97,14 @@ export const PostureVisualizer: React.FC = () => {
               setSelectedPosture('left-lateral');
               setActivePin(null);
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 clay-btn ${
+            className={`px-3 py-2.5 sm:py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 clay-btn ${
               selectedPosture === 'left-lateral'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-sky-500"></span>
-            2. Left-Lateral Decubitus
+            <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0"></span>
+            <span className="truncate">2. Left-Lateral Decubitus</span>
           </button>
           <button
             onClick={() => {
@@ -112,23 +112,23 @@ export const PostureVisualizer: React.FC = () => {
               setSelectedPosture('contraindicated');
               setActivePin(null);
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 clay-btn ${
+            className={`px-3 py-2.5 sm:py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 clay-btn ${
               selectedPosture === 'contraindicated'
                 ? 'bg-rose-50 text-rose-950 shadow-clay-pill border border-rose-200'
                 : 'text-rose-700 hover:text-rose-950'
             }`}
           >
-            <Ban className="w-3.5 h-3.5 text-rose-600" />
-            <span>Forbidden Positions</span>
+            <Ban className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+            <span className="truncate">3. Forbidden Postures</span>
           </button>
         </div>
       </div>
 
       {/* Anatomy Mechanics Accordion */}
       {showAnatomyExplainer && (
-        <div className="rounded-2xl bg-violet-50/80 p-4.5 border border-violet-200/70 clay-debossed space-y-3 animate-fade-in">
+        <div className="rounded-2xl bg-violet-50/80 p-3.5 sm:p-4.5 border border-violet-200/70 clay-debossed space-y-3 animate-fade-in">
           <div className="flex items-center gap-2">
-            <HeartPulse className="w-4 h-4 text-violet-700" />
+            <HeartPulse className="w-4 h-4 text-violet-700 shrink-0" />
             <h4 className="text-xs sm:text-sm font-black text-violet-950">
               The Two Opposing Forces We Are Balancing:
             </h4>
@@ -152,25 +152,30 @@ export const PostureVisualizer: React.FC = () => {
 
       {/* POSTURE 1: MODIFIED FOWLER'S WITH DYNAMIC ANGLE SIMULATOR */}
       {selectedPosture === 'fowlers' && (
-        <div className="rounded-2xl bg-gradient-to-br from-violet-50/80 to-emerald-50/80 p-5 sm:p-7 clay-debossed space-y-6">
-          {/* Angle Simulator Slider Bar */}
-          <div className="rounded-2xl bg-white/95 p-4 shadow-sm border border-violet-100 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center font-black">
-                <Sliders className="w-4 h-4" />
+        <div className="rounded-2xl bg-gradient-to-br from-violet-50/80 to-emerald-50/80 p-3.5 sm:p-7 clay-debossed space-y-5 sm:space-y-6">
+          {/* Angle Simulator Slider Bar - Mobile Optimized */}
+          <div className="rounded-2xl bg-white/95 p-3.5 sm:p-4 shadow-sm border border-violet-100 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center font-black shrink-0">
+                  <Sliders className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-violet-900 block">
+                    Interactive Incline Simulator
+                  </span>
+                  <span className="text-[11px] font-bold text-violet-700 hidden sm:block">
+                    Drag slider to see real-time esophageal barrier vs reflux risk
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="text-[11px] font-black uppercase tracking-wider text-violet-900 block">
-                  Interactive Incline Simulator
-                </span>
-                <span className="text-xs font-bold text-violet-700">
-                  Drag slider to see real-time esophageal barrier vs reflux risk
-                </span>
-              </div>
+              <span className="text-xs font-black text-violet-950 bg-violet-100 px-2.5 py-1 rounded-lg shrink-0">
+                Angle: {simulatedAngle}°
+              </span>
             </div>
 
-            {/* Slider and Presets */}
-            <div className="flex items-center gap-3 w-full md:w-auto">
+            {/* Slider and Touch-Friendly Preset Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-3">
               <input
                 type="range"
                 min="0"
@@ -182,15 +187,15 @@ export const PostureVisualizer: React.FC = () => {
                   setSimulatedAngle(val);
                   if (val === 0 || val === 38 || val === 45) sound.playPop(700);
                 }}
-                className="w-full md:w-48 accent-violet-600 cursor-pointer"
+                className="w-full accent-violet-600 cursor-pointer h-2 bg-violet-200 rounded-lg appearance-none"
               />
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto shrink-0">
                 <button
                   onClick={() => {
                     sound.playPop(550);
                     setSimulatedAngle(0);
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all ${
+                  className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn ${
                     simulatedAngle === 0
                       ? 'bg-rose-600 text-white shadow-sm'
                       : 'bg-rose-100 text-rose-900 hover:bg-rose-200'
@@ -203,7 +208,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(800);
                     setSimulatedAngle(38);
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all ${
+                  className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn ${
                     simulatedAngle === 38
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-emerald-100 text-emerald-900 hover:bg-emerald-200'
@@ -216,7 +221,7 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(850);
                     setSimulatedAngle(48);
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all ${
+                  className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all text-center clay-btn ${
                     simulatedAngle === 48
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-emerald-100 text-emerald-900 hover:bg-emerald-200'
@@ -231,35 +236,31 @@ export const PostureVisualizer: React.FC = () => {
           <div className="flex flex-col lg:flex-row items-center gap-6">
             {/* Medically Accurate Anatomical SVG with Dynamic Tilt & Flow */}
             <div className="w-full lg:w-7/12 flex flex-col items-center">
-              <div className="w-full max-w-lg bg-white/95 rounded-2xl p-4 shadow-sm border border-violet-100/90 relative overflow-hidden">
+              <div className="w-full bg-white/95 rounded-2xl p-3 sm:p-4 shadow-sm border border-violet-100/90 relative overflow-hidden">
                 {/* Dynamic Status Header */}
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full transition-all ${
-                        isDangerAngle
-                          ? 'bg-rose-200 text-rose-950 animate-pulse'
-                          : isGoldenAngle
-                          ? 'bg-emerald-100 text-emerald-900'
-                          : 'bg-amber-100 text-amber-900'
-                      }`}
-                    >
-                      {isDangerAngle
-                        ? '⛔ ACID REFLUX DANGER (0°–25°)'
+                  <span
+                    className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full transition-all ${
+                      isDangerAngle
+                        ? 'bg-rose-200 text-rose-950 animate-pulse'
                         : isGoldenAngle
-                        ? '✅ OPTIMAL ANTI-REFLUX & VENOUS FLOW'
-                        : '⚠️ HIGH ORTHOSTATIC WORKLOAD'}
-                    </span>
-                  </div>
-
-                  <span className="text-xs font-black text-violet-950 bg-violet-100 px-2.5 py-0.5 rounded-lg">
-                    Angle: {simulatedAngle}°
+                        ? 'bg-emerald-100 text-emerald-900'
+                        : 'bg-amber-100 text-amber-900'
+                    }`}
+                  >
+                    {isDangerAngle
+                      ? '⛔ ACID REFLUX DANGER'
+                      : isGoldenAngle
+                      ? '✅ OPTIMAL ANTI-REFLUX'
+                      : '⚠️ HIGH ORTHOSTATIC WORKLOAD'}
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold text-violet-700">
+                    {isDangerAngle ? 'LES Submerged' : 'LES Elevated'}
                   </span>
                 </div>
 
                 <svg viewBox="0 0 520 290" className="w-full h-auto drop-shadow-sm select-none">
                   <defs>
-                    {/* Animated Stream Pattern for Venous Flow */}
                     <marker
                       id="arrow-cyan-flow"
                       viewBox="0 0 10 10"
@@ -272,7 +273,6 @@ export const PostureVisualizer: React.FC = () => {
                       <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284C7" />
                     </marker>
 
-                    {/* Acid Gradient */}
                     <linearGradient id="acidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stopColor="#EF4444" stopOpacity="0.9" />
                       <stop offset="100%" stopColor="#B91C1C" stopOpacity="1" />
@@ -353,7 +353,7 @@ export const PostureVisualizer: React.FC = () => {
                     <circle
                       cx="225"
                       cy="160"
-                      r="7"
+                      r="8"
                       fill={isDangerAngle ? '#EF4444' : '#10B981'}
                       stroke="#FFFFFF"
                       strokeWidth="2"
@@ -381,7 +381,7 @@ export const PostureVisualizer: React.FC = () => {
                           fill="url(#acidGrad)"
                           opacity="0.95"
                         />
-                        <text x="110" y="145" fontSize="10" fontWeight="900" fill="#DC2626">
+                        <text x="110" y="145" fontSize="12" fontWeight="900" fill="#DC2626">
                           ⚠️ Acid Spill into Throat!
                         </text>
                       </g>
@@ -395,7 +395,7 @@ export const PostureVisualizer: React.FC = () => {
                       />
                     )}
 
-                    {/* Arm Resting Calmly */}
+                    {/* Arm */}
                     <path
                       d="M 195 140 L 230 178 L 275 195"
                       fill="none"
@@ -405,16 +405,13 @@ export const PostureVisualizer: React.FC = () => {
                     />
                   </g>
 
-                  {/* Lower Body: Hips & Calves (Stationary) */}
+                  {/* Lower Body: Hips & Calves */}
                   <circle cx="260" cy="205" r="12" fill="#5B21B6" />
-                  {/* Thigh */}
                   <path d="M 260 205 L 355 190" stroke="#6D28D9" strokeWidth="18" strokeLinecap="round" />
-                  {/* Calves resting on Pillow */}
                   <path d="M 355 190 L 440 215" stroke="#6D28D9" strokeWidth="15" strokeLinecap="round" />
-                  {/* Feet */}
                   <path d="M 440 215 L 455 202" stroke="#6D28D9" strokeWidth="10" strokeLinecap="round" />
 
-                  {/* ANIMATED VENOUS RETURN STREAM (Inspo style live dashed flow) */}
+                  {/* ANIMATED VENOUS RETURN STREAM */}
                   <path
                     d="M 430 185 Q 360 150 280 170"
                     fill="none"
@@ -424,11 +421,11 @@ export const PostureVisualizer: React.FC = () => {
                     markerEnd="url(#arrow-cyan-flow)"
                     className="animate-flow-dash"
                   />
-                  <text x="310" y="150" fontSize="10" fontWeight="900" fill="#0369A1">
-                    Venous Return to Heart (IVC)
+                  <text x="310" y="150" fontSize="11" fontWeight="900" fill="#0369A1">
+                    Venous Return to Heart
                   </text>
 
-                  {/* INTERACTIVE INSPECTION PINS (Inspo Lab Style) */}
+                  {/* INTERACTIVE INSPECTION PINS */}
                   {/* Pin 1: Pillow Ramp */}
                   <g
                     className="cursor-pointer"
@@ -437,9 +434,9 @@ export const PostureVisualizer: React.FC = () => {
                       setActivePin('pillows');
                     }}
                   >
-                    <circle cx="95" cy="190" r="11" fill="#8B5CF6" opacity="0.2" className="animate-beacon-pulse" />
-                    <circle cx="95" cy="190" r="7" fill="#7C3AED" stroke="#FFFFFF" strokeWidth="1.5" />
-                    <text x="92" y="193" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                    <circle cx="95" cy="190" r="12" fill="#8B5CF6" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="95" cy="190" r="8" fill="#7C3AED" stroke="#FFFFFF" strokeWidth="2" />
+                    <text x="91" y="194" fontSize="10" fontWeight="900" fill="#FFFFFF">
                       1
                     </text>
                   </g>
@@ -452,9 +449,9 @@ export const PostureVisualizer: React.FC = () => {
                       setActivePin('les');
                     }}
                   >
-                    <circle cx="230" cy="148" r="11" fill="#10B981" opacity="0.25" className="animate-beacon-pulse" />
-                    <circle cx="230" cy="148" r="7" fill="#059669" stroke="#FFFFFF" strokeWidth="1.5" />
-                    <text x="227" y="151" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                    <circle cx="230" cy="148" r="12" fill="#10B981" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="230" cy="148" r="8" fill="#059669" stroke="#FFFFFF" strokeWidth="2" />
+                    <text x="226" y="152" fontSize="10" fontWeight="900" fill="#FFFFFF">
                       2
                     </text>
                   </g>
@@ -467,9 +464,9 @@ export const PostureVisualizer: React.FC = () => {
                       setActivePin('stomach');
                     }}
                   >
-                    <circle cx="255" cy="195" r="11" fill="#EF4444" opacity="0.25" className="animate-beacon-pulse" />
-                    <circle cx="255" cy="195" r="7" fill="#DC2626" stroke="#FFFFFF" strokeWidth="1.5" />
-                    <text x="252" y="198" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                    <circle cx="255" cy="195" r="12" fill="#EF4444" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="255" cy="195" r="8" fill="#DC2626" stroke="#FFFFFF" strokeWidth="2" />
+                    <text x="251" y="199" fontSize="10" fontWeight="900" fill="#FFFFFF">
                       3
                     </text>
                   </g>
@@ -482,15 +479,15 @@ export const PostureVisualizer: React.FC = () => {
                       setActivePin('calves');
                     }}
                   >
-                    <circle cx="395" cy="210" r="11" fill="#0284C7" opacity="0.25" className="animate-beacon-pulse" />
-                    <circle cx="395" cy="210" r="7" fill="#0284C7" stroke="#FFFFFF" strokeWidth="1.5" />
-                    <text x="392" y="213" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                    <circle cx="395" cy="210" r="12" fill="#0284C7" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="395" cy="210" r="8" fill="#0284C7" stroke="#FFFFFF" strokeWidth="2" />
+                    <text x="391" y="214" fontSize="10" fontWeight="900" fill="#FFFFFF">
                       4
                     </text>
                   </g>
                 </svg>
 
-                {/* Hotspot Inspection Tray (Inspo Motion Lab Pattern) */}
+                {/* Hotspot Inspection Detail Tray */}
                 <div className="mt-3 p-3 rounded-xl bg-violet-50/90 border border-violet-200/80 text-xs font-bold text-violet-950 transition-all flex items-start gap-2.5">
                   <div className="w-5 h-5 rounded-md bg-violet-600 text-white font-black text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                     {activePin === 'pillows'
@@ -509,7 +506,7 @@ export const PostureVisualizer: React.FC = () => {
                     )}
                     {activePin === 'les' && (
                       <p>
-                        <strong>Lower Esophageal Sphincter (LES):</strong> Sits safely above the gastric fluid level at &ge;32° incline. Prevents acid reflux while relaxing without closing the airway.
+                        <strong>Lower Esophageal Sphincter (LES):</strong> Sits safely above the gastric fluid level at &ge;32° incline. Prevents acid reflux without constricting breathing.
                       </p>
                     )}
                     {activePin === 'stomach' && (
@@ -519,23 +516,22 @@ export const PostureVisualizer: React.FC = () => {
                     )}
                     {activePin === 'calves' && (
                       <p>
-                        <strong>Calf & Knee Elevation:</strong> Knees bent at 25° over a folded pillow shifts 300–500 mL of pooled venous blood back to the central venous pool, banishing dizziness.
+                        <strong>Calf & Knee Elevation:</strong> Knees bent at 25° over a folded pillow shifts 300–500 mL of pooled venous blood back to central circulation, relieving presyncope.
                       </p>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Pin Selection Pills */}
-              <div className="flex items-center gap-2 mt-2 flex-wrap justify-center">
-                <span className="text-[10px] font-black uppercase text-violet-700">Tap Hotspot:</span>
+              {/* Pin Selection Grid - Touch-Friendly on Mobile */}
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 w-full justify-center mt-2">
                 <button
                   onClick={() => {
                     sound.playPop(700);
                     setActivePin('pillows');
                   }}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
-                    activePin === 'pillows' ? 'bg-violet-600 text-white' : 'bg-white text-violet-800'
+                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                    activePin === 'pillows' ? 'bg-violet-600 text-white shadow-sm' : 'bg-white text-violet-800'
                   }`}
                 >
                   1. Pillows Ramp
@@ -545,8 +541,8 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(750);
                     setActivePin('les');
                   }}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
-                    activePin === 'les' ? 'bg-emerald-600 text-white' : 'bg-white text-emerald-800'
+                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                    activePin === 'les' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-800'
                   }`}
                 >
                   2. LES Valve
@@ -556,8 +552,8 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(800);
                     setActivePin('stomach');
                   }}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
-                    activePin === 'stomach' ? 'bg-rose-600 text-white' : 'bg-white text-rose-800'
+                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                    activePin === 'stomach' ? 'bg-rose-600 text-white shadow-sm' : 'bg-white text-rose-800'
                   }`}
                 >
                   3. Gastric Pool
@@ -567,8 +563,8 @@ export const PostureVisualizer: React.FC = () => {
                     sound.playPop(850);
                     setActivePin('calves');
                   }}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
-                    activePin === 'calves' ? 'bg-sky-600 text-white' : 'bg-white text-sky-800'
+                  className={`py-2 px-2.5 rounded-xl text-xs font-black clay-btn text-center ${
+                    activePin === 'calves' ? 'bg-sky-600 text-white shadow-sm' : 'bg-white text-sky-800'
                   }`}
                 >
                   4. Calf Pump
@@ -579,7 +575,7 @@ export const PostureVisualizer: React.FC = () => {
             {/* Checklist details & Clinical Rationale */}
             <div className="w-full lg:w-5/12 space-y-3.5">
               <div className="space-y-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
                   Clinical Action Blueprint
                 </span>
                 <h4 className="text-base sm:text-lg font-black text-violet-950">
@@ -635,11 +631,11 @@ export const PostureVisualizer: React.FC = () => {
 
       {/* POSTURE 2: LEFT-LATERAL DECUBITUS WITH SIDE COMPARISON */}
       {selectedPosture === 'left-lateral' && (
-        <div className="rounded-2xl bg-gradient-to-br from-violet-50/80 to-sky-50/80 p-5 sm:p-7 clay-debossed space-y-6">
+        <div className="rounded-2xl bg-gradient-to-br from-violet-50/80 to-sky-50/80 p-3.5 sm:p-7 clay-debossed space-y-5 sm:space-y-6">
           {/* Side Comparison Toggle */}
-          <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full">
                 Anatomical Orientation Toggle
               </span>
               <h4 className="text-sm sm:text-base font-black text-violet-950 mt-1">
@@ -647,32 +643,32 @@ export const PostureVisualizer: React.FC = () => {
               </h4>
             </div>
 
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-sky-100/80 clay-debossed">
+            <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-sky-100/80 clay-debossed w-full sm:w-auto">
               <button
                 onClick={() => {
                   sound.playPop(750);
                   setLeftLateralView('left');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                className={`px-3 py-2 rounded-lg text-xs font-black transition-all text-center clay-btn ${
                   leftLateralView === 'left'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-sky-900 hover:text-sky-950'
                 }`}
               >
-                ✅ Left Side (Recommended)
+                ✅ Left Side (Safe)
               </button>
               <button
                 onClick={() => {
                   sound.playPop(600);
                   setLeftLateralView('right');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                className={`px-3 py-2 rounded-lg text-xs font-black transition-all text-center clay-btn ${
                   leftLateralView === 'right'
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'text-rose-900 hover:text-rose-950'
                 }`}
               >
-                ❌ Right Side (Reflux Trap)
+                ❌ Right Side (Trap)
               </button>
             </div>
           </div>
@@ -680,17 +676,17 @@ export const PostureVisualizer: React.FC = () => {
           <div className="flex flex-col lg:flex-row items-center gap-6">
             {/* SVG Diagram: Left Lateral vs Right Lateral */}
             <div className="w-full lg:w-7/12 flex flex-col items-center">
-              <div className="w-full max-w-lg bg-white/95 rounded-2xl p-4 shadow-sm border border-violet-100/80">
+              <div className="w-full bg-white/95 rounded-2xl p-3 sm:p-4 shadow-sm border border-violet-100/80">
                 <div className="flex items-center justify-between mb-2">
                   <span
-                    className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                    className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
                       leftLateralView === 'left' ? 'bg-sky-100 text-sky-900' : 'bg-rose-100 text-rose-900'
                     }`}
                   >
-                    {leftLateralView === 'left' ? 'LEFT LATERAL DECUBITUS' : 'RIGHT LATERAL DECUBITUS (UNSAFE)'}
+                    {leftLateralView === 'left' ? 'LEFT LATERAL DECUBITUS' : 'RIGHT LATERAL (UNSAFE)'}
                   </span>
-                  <span className="text-[11px] font-black text-violet-900">
-                    {leftLateralView === 'left' ? 'Greater Curvature Down' : 'LES Submerged in Acid'}
+                  <span className="text-[10px] sm:text-[11px] font-black text-violet-900">
+                    {leftLateralView === 'left' ? 'Curvature Down' : 'LES Submerged'}
                   </span>
                 </div>
 
@@ -702,13 +698,13 @@ export const PostureVisualizer: React.FC = () => {
                   {/* 2 Head Pillows */}
                   <ellipse cx="110" cy="180" rx="35" ry="16" fill="#DDD6FE" stroke="#8B5CF6" strokeWidth="1.5" />
                   <ellipse cx="115" cy="162" rx="30" ry="14" fill="#C4B5FD" stroke="#7C3AED" strokeWidth="1.5" />
-                  <text x="75" y="135" fontSize="10" fontWeight="bold" fill="#5B21B6">
+                  <text x="75" y="135" fontSize="11" fontWeight="bold" fill="#5B21B6">
                     2 Head Pillows (15°+)
                   </text>
 
                   {/* Pillow between knees */}
                   <ellipse cx="370" cy="205" rx="22" ry="13" fill="#A7F3D0" stroke="#059669" strokeWidth="2" />
-                  <text x="320" y="245" fontSize="10" fontWeight="bold" fill="#047857">
+                  <text x="320" y="245" fontSize="11" fontWeight="bold" fill="#047857">
                     Pillow Between Knees
                   </text>
 
@@ -722,25 +718,21 @@ export const PostureVisualizer: React.FC = () => {
                   {leftLateralView === 'left' ? (
                     /* LEFT SIDE ANATOMY: Stomach bowl at bottom */
                     <g>
-                      {/* Esophagus entering from top */}
                       <path d="M 175 160 L 210 178" stroke="#FDA4AF" strokeWidth="5" strokeLinecap="round" />
-                      {/* Stomach Contour with deep greater curvature pool */}
                       <path
                         d="M 210 178 Q 220 215 255 210 Q 275 195 245 175 Z"
                         fill="#FCA5A5"
                         stroke="#EF4444"
                         strokeWidth="2"
                       />
-                      {/* Acid trapped in bowl */}
                       <path
                         d="M 220 200 Q 240 218 255 210 Q 260 200 230 195 Z"
                         fill="#DC2626"
                         opacity="0.9"
                         className="animate-wave-sway"
                       />
-                      {/* Safe LES */}
-                      <circle cx="210" cy="178" r="6" fill="#10B981" stroke="#FFFFFF" strokeWidth="1.5" />
-                      <text x="165" y="198" fontSize="10" fontWeight="900" fill="#047857">
+                      <circle cx="210" cy="178" r="7" fill="#10B981" stroke="#FFFFFF" strokeWidth="1.5" />
+                      <text x="165" y="198" fontSize="11" fontWeight="900" fill="#047857">
                         LES Higher (Guarded)
                       </text>
                       <line
@@ -752,12 +744,12 @@ export const PostureVisualizer: React.FC = () => {
                         strokeWidth="2"
                         className="animate-flow-dash"
                       />
-                      <text x="248" y="178" fontSize="9" fontWeight="900" fill="#B91C1C">
+                      <text x="248" y="178" fontSize="10" fontWeight="900" fill="#B91C1C">
                         Acid Trapped by Gravity
                       </text>
                     </g>
                   ) : (
-                    /* RIGHT SIDE ANATOMY: Stomach upside down, acid overflows into esophagus */
+                    /* RIGHT SIDE ANATOMY: Acid overflow */
                     <g className="animate-pulse">
                       <path d="M 175 185 L 210 170" stroke="#EF4444" strokeWidth="6" strokeLinecap="round" />
                       <path
@@ -771,8 +763,8 @@ export const PostureVisualizer: React.FC = () => {
                         fill="#DC2626"
                         opacity="0.95"
                       />
-                      <circle cx="210" cy="170" r="6" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
-                      <text x="110" y="180" fontSize="11" fontWeight="900" fill="#DC2626">
+                      <circle cx="210" cy="170" r="7" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
+                      <text x="110" y="180" fontSize="12" fontWeight="900" fill="#DC2626">
                         ⛔ Acid Flooding Esophagus!
                       </text>
                     </g>
@@ -780,7 +772,7 @@ export const PostureVisualizer: React.FC = () => {
                 </svg>
               </div>
 
-              <div className="flex items-center gap-4 mt-2 text-[11px] font-bold text-violet-700">
+              <div className="flex items-center gap-3 mt-2 text-[10px] sm:text-[11px] font-bold text-violet-700 flex-wrap justify-center">
                 <span className="flex items-center gap-1">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
                   Greater curvature acts as a gravitational trap
@@ -795,7 +787,7 @@ export const PostureVisualizer: React.FC = () => {
             {/* Left Lateral Clinical Checklist */}
             <div className="w-full lg:w-5/12 space-y-3.5">
               <div className="space-y-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-3 py-1 rounded-full">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-3 py-1 rounded-full">
                   Anatomical Science
                 </span>
                 <h4 className="text-base sm:text-lg font-black text-violet-950">
@@ -851,10 +843,10 @@ export const PostureVisualizer: React.FC = () => {
 
       {/* POSTURE 3: CONTRAINDICATED / FORBIDDEN POSITIONS */}
       {selectedPosture === 'contraindicated' && (
-        <div className="rounded-2xl bg-gradient-to-br from-rose-50 to-orange-50/70 p-5 sm:p-7 clay-debossed space-y-6">
+        <div className="rounded-2xl bg-gradient-to-br from-rose-50 to-orange-50/70 p-3.5 sm:p-7 clay-debossed space-y-5 sm:space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-rose-800 bg-rose-200/90 px-3 py-1 rounded-full">
+              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-rose-800 bg-rose-200/90 px-3 py-1 rounded-full">
                 Danger Zone & Clinical Hazards
               </span>
               <h4 className="text-base sm:text-lg font-black text-rose-950 mt-1">
@@ -866,9 +858,9 @@ export const PostureVisualizer: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             {/* Card 1: Flat Supine */}
-            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
+            <div className="rounded-2xl bg-white/95 p-4 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-rose-700 uppercase">Hazard 1</span>
                 <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-[10px]">
@@ -882,7 +874,7 @@ export const PostureVisualizer: React.FC = () => {
             </div>
 
             {/* Card 2: Trendelenburg (Head Down / Legs High) */}
-            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
+            <div className="rounded-2xl bg-white/95 p-4 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-rose-700 uppercase">Hazard 2</span>
                 <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-[10px]">
@@ -897,7 +889,7 @@ export const PostureVisualizer: React.FC = () => {
             </div>
 
             {/* Card 3: Right-Lateral Position */}
-            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
+            <div className="rounded-2xl bg-white/95 p-4 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-rose-700 uppercase">Hazard 3</span>
                 <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-[10px]">
@@ -911,7 +903,7 @@ export const PostureVisualizer: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-rose-100/90 text-xs font-bold text-rose-950 flex items-center justify-between flex-wrap gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-100/90 text-xs font-bold text-rose-950 flex flex-col sm:flex-row items-center justify-between gap-3">
             <span>
               💡 <strong>Summary:</strong> Always choose <strong>Modified Fowler's (35°–45°)</strong> or <strong>Left-Side Recline</strong> until at least 90 minutes post-meal.
             </span>
@@ -920,7 +912,7 @@ export const PostureVisualizer: React.FC = () => {
                 sound.playPop(700);
                 setSelectedPosture('fowlers');
               }}
-              className="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-black text-xs hover:bg-rose-700 shadow-sm flex items-center gap-1 transition-all clay-btn"
+              className="w-full sm:w-auto px-4 py-2 rounded-xl bg-rose-600 text-white font-black text-xs hover:bg-rose-700 shadow-sm flex items-center justify-center gap-1 transition-all clay-btn"
             >
               <span>Back to Fowler's</span>
               <ChevronRight className="w-3.5 h-3.5" />

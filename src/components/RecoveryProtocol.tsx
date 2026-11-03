@@ -7,35 +7,35 @@ import { VisualRecoveryWorkflow } from './VisualRecoveryWorkflow';
 
 export const RecoveryProtocol: React.FC = () => {
   return (
-    <div className="max-w-5xl mx-auto px-4 space-y-8 mb-16 animate-fade-in">
+    <div className="max-w-5xl mx-auto px-2.5 sm:px-4 space-y-6 sm:space-y-8 mb-16 animate-fade-in">
       {/* 1. Header & Clinical Scenario Overview Banner */}
-      <div className="rounded-[36px] bg-gradient-to-br from-violet-200/90 via-sky-100/90 to-emerald-100/90 p-6 sm:p-8 shadow-clay-card border-none relative overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="inline-flex items-center gap-2 rounded-full bg-rose-200 px-4 py-1.5 shadow-clay-pill text-xs font-black uppercase tracking-wider text-rose-950">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping" />
-            Postprandial Blood Pooling & Hypovolemia (Anti-Reflux Protocol Active)
+      <div className="rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-violet-200/90 via-sky-100/90 to-emerald-100/90 p-4 sm:p-8 shadow-clay-card border-none relative overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3 sm:mb-4">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-rose-200 px-3 sm:px-4 py-1 sm:py-1.5 shadow-clay-pill text-[10px] sm:text-xs font-black uppercase tracking-wider text-rose-950">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-rose-600 animate-ping shrink-0" />
+            <span className="truncate">Anti-Reflux Protocol Active</span>
           </div>
-          <span className="text-xs font-bold text-violet-950/70 bg-white/60 px-3 py-1 rounded-full shadow-clay-pill">
+          <span className="text-[10px] sm:text-xs font-bold text-violet-950/70 bg-white/60 px-2.5 sm:px-3 py-1 rounded-full shadow-clay-pill">
             Clinical Recovery Guide
           </span>
         </div>
 
-        <div className="space-y-3">
-          <h1 className="text-2xl sm:text-4xl font-black text-clay-indigo-dark tracking-tight">
-            Accever's Acute Recovery Protocol 🩺
+        <div className="space-y-2.5 sm:space-y-3">
+          <h1 className="text-xl sm:text-4xl font-black text-clay-indigo-dark tracking-tight">
+            Accever's Recovery Protocol 🩺
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-violet-950/85 leading-relaxed max-w-3xl">
             <strong>Subject:</strong> Adult female recreational tennis player recovering from post-match hypovolemia, dehydration, and splanchnic blood pooling (presyncope/dizziness following heavy meal of sinigang, rice, chicken liver).
           </p>
 
-          <div className="pt-2 flex flex-wrap gap-2 text-[11px] font-bold text-violet-900">
-            <span className="rounded-xl bg-white/70 px-3 py-1 shadow-clay-pill flex items-center gap-1.5">
+          <div className="pt-1 sm:pt-2 flex flex-wrap gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold text-violet-900">
+            <span className="rounded-xl bg-white/70 px-2.5 sm:px-3 py-1 shadow-clay-pill flex items-center gap-1">
               🎾 Post-Tennis Fluid Loss
             </span>
-            <span className="rounded-xl bg-white/70 px-3 py-1 shadow-clay-pill flex items-center gap-1.5">
-              🍲 Splanchnic Siphon (Sinigang/Liver)
+            <span className="rounded-xl bg-white/70 px-2.5 sm:px-3 py-1 shadow-clay-pill flex items-center gap-1">
+              🍲 Splanchnic Siphon (Sinigang)
             </span>
-            <span className="rounded-xl bg-rose-100 text-rose-900 px-3 py-1 shadow-clay-pill flex items-center gap-1.5 font-extrabold">
+            <span className="rounded-xl bg-rose-100 text-rose-900 px-2.5 sm:px-3 py-1 shadow-clay-pill flex items-center gap-1 font-extrabold">
               ⚠️ Strict Anti-Reflux: Never Flat
             </span>
           </div>
@@ -43,20 +43,20 @@ export const RecoveryProtocol: React.FC = () => {
       </div>
 
       {/* 2. Real-Time Vitals & Baseline Alert Bar (Clinical Metrics Display) */}
-      <div className="rounded-[32px] bg-white/90 p-6 sm:p-7 shadow-clay-card space-y-4">
+      <div className="rounded-[28px] sm:rounded-[32px] bg-white/90 p-4 sm:p-7 shadow-clay-card space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-violet-700" />
-            <h3 className="text-base sm:text-lg font-black text-clay-indigo-dark">
-              Vitals Baseline vs Stabilization Targets
+            <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-violet-700 shrink-0" />
+            <h3 className="text-sm sm:text-lg font-black text-clay-indigo-dark">
+              Vitals Baseline vs Targets
             </h3>
           </div>
-          <span className="text-xs font-bold text-violet-700 bg-violet-100 px-3 py-1 rounded-full">
+          <span className="text-[10px] sm:text-xs font-bold text-violet-700 bg-violet-100 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full">
             Clinical Metrics
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           {/* Heart Rate Metric */}
           <div className="rounded-2xl bg-rose-50/90 p-4 clay-debossed space-y-3 border border-rose-100">
             <div className="flex items-center justify-between">

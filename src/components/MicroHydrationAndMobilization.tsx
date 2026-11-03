@@ -49,21 +49,21 @@ export const MicroHydrationAndMobilization: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
       {/* Phase 2: Micro-Hydration Card */}
-      <div className="rounded-[32px] bg-sky-50/90 p-6 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-5">
+      <div className="rounded-[28px] sm:rounded-[32px] bg-sky-50/90 p-4 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-4 sm:space-y-5">
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-sky-950 shadow-clay-sky">
               <Droplet className="w-3.5 h-3.5 text-sky-700" />
-              Phase 2: Micro-Hydration (45–60 Mins)
+              Phase 2: Micro-Hydration
             </span>
             <span className="text-xs font-black text-sky-900 bg-sky-200/80 px-2.5 py-0.5 rounded-full">
               Pocari Sweat
             </span>
           </div>
 
-          <h3 className="text-lg font-black text-violet-950 mb-1">
+          <h3 className="text-base sm:text-lg font-black text-violet-950 mb-1">
             Osmotic Absorption Protocol 💧
           </h3>
           <p className="text-xs sm:text-sm font-semibold text-violet-900/80 leading-relaxed mb-4">
@@ -71,7 +71,7 @@ export const MicroHydrationAndMobilization: React.FC = () => {
           </p>
 
           {/* Sip Countdown Display */}
-          <div className="rounded-2xl bg-white/80 p-4 clay-debossed flex items-center justify-between">
+          <div className="rounded-2xl bg-white/80 p-3.5 sm:p-4 clay-debossed flex flex-col xs:flex-row xs:items-center justify-between gap-3">
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider text-sky-700 block">
                 Next Micro-Sip Window
@@ -81,8 +81,8 @@ export const MicroHydrationAndMobilization: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-2 rounded-xl bg-sky-100 text-sky-950 px-3.5 py-2 text-xs font-bold shadow-clay-pill">
-              <Droplet className="w-4 h-4 text-sky-700" />
+            <div className="flex items-center gap-2 rounded-xl bg-sky-100 text-sky-950 px-3 py-2 text-xs font-bold shadow-clay-pill self-start xs:self-auto">
+              <Droplet className="w-4 h-4 text-sky-700 shrink-0" />
               <span>1 Micro-Sip (20–30 mL)</span>
             </div>
           </div>
@@ -94,19 +94,19 @@ export const MicroHydrationAndMobilization: React.FC = () => {
       </div>
 
       {/* Phase 3: Staged Orthostatic Mobilization */}
-      <div className="rounded-[32px] bg-emerald-50/90 p-6 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-5">
+      <div className="rounded-[28px] sm:rounded-[32px] bg-emerald-50/90 p-4 sm:p-7 shadow-clay-card flex flex-col justify-between space-y-4 sm:space-y-5">
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-emerald-950 shadow-clay-pill-mint">
               <Activity className="w-3.5 h-3.5 text-emerald-700" />
-              Phase 3: Staged Mobilization (60+ Mins)
+              Phase 3: Staged Mobilization
             </span>
             <span className="text-xs font-black text-emerald-900 bg-emerald-200/80 px-2.5 py-0.5 rounded-full">
               Anti-Syncope Check
             </span>
           </div>
 
-          <h3 className="text-lg font-black text-violet-950 mb-1">
+          <h3 className="text-base sm:text-lg font-black text-violet-950 mb-1">
             Safe Orthostatic Transition 🚶‍♀️
           </h3>
           <p className="text-xs sm:text-sm font-semibold text-violet-900/80 leading-relaxed mb-4">

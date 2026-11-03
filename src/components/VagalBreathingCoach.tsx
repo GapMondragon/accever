@@ -242,23 +242,23 @@ export const VagalBreathingCoach: React.FC = () => {
         </div>
       </div>
 
-      {/* Preset Duration Buttons */}
-      <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-violet-100">
+      {/* Preset Duration Buttons - Responsive Grid on Mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-violet-100">
         <span className="text-xs font-black uppercase tracking-wider text-violet-800">
           Target Session Duration:
         </span>
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto">
           {DURATION_PRESETS.map((preset) => (
             <button
               key={preset.seconds}
               onClick={() => handleSelectPreset(preset.seconds)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+              className={`py-2 px-2.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn text-center ${
                 sessionDuration === preset.seconds
-                  ? 'bg-violet-300 text-violet-950 shadow-clay-lavender scale-105'
+                  ? 'bg-violet-300 text-violet-950 shadow-clay-lavender scale-102'
                   : 'bg-white/80 text-violet-800 hover:bg-white shadow-clay-pill'
               }`}
             >
-              <span>{preset.label}</span>
+              <span className="block truncate">{preset.label}</span>
               <span className="text-[10px] block opacity-75 font-normal">
                 {preset.cycles} cycles
               </span>
@@ -268,7 +268,7 @@ export const VagalBreathingCoach: React.FC = () => {
       </div>
 
       {/* Main Breathing Stage */}
-      <div className="rounded-3xl bg-gradient-to-b from-sky-50/80 via-emerald-50/50 to-violet-50/80 p-6 sm:p-10 clay-debossed flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="rounded-3xl bg-gradient-to-b from-sky-50/80 via-emerald-50/50 to-violet-50/80 p-4 sm:p-10 clay-debossed flex flex-col items-center justify-center relative overflow-hidden">
         {/* Subtle Ambient Aura */}
         <div
           className={`absolute inset-0 transition-opacity duration-1000 pointer-events-none ${
@@ -281,7 +281,7 @@ export const VagalBreathingCoach: React.FC = () => {
         />
 
         {/* Big Animated Breathing Orb with SVG Circular Timer Ring */}
-        <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center my-4">
+        <div className="relative w-52 h-52 sm:w-72 sm:h-72 flex items-center justify-center my-3 sm:my-4">
           {/* SVG Progress Ring */}
           <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 200 200">
             {/* Background track */}
@@ -311,11 +311,11 @@ export const VagalBreathingCoach: React.FC = () => {
 
           {/* Central Inflated Clay Breathing Dough Ball */}
           <div
-            className={`w-44 h-44 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center text-center p-4 transition-all duration-1000 ease-in-out select-none cursor-pointer ${
+            className={`w-36 h-36 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center text-center p-3 sm:p-4 transition-all duration-1000 ease-in-out select-none cursor-pointer ${
               isActive
                 ? phase === 'inhale'
-                  ? 'scale-115 bg-gradient-to-tr from-sky-200 via-sky-100 to-emerald-200 shadow-clay-card'
-                  : 'scale-85 bg-gradient-to-tr from-violet-200 via-emerald-100 to-sky-100 shadow-clay-debossed'
+                  ? 'scale-110 sm:scale-115 bg-gradient-to-tr from-sky-200 via-sky-100 to-emerald-200 shadow-clay-card'
+                  : 'scale-90 sm:scale-85 bg-gradient-to-tr from-violet-200 via-emerald-100 to-sky-100 shadow-clay-debossed'
                 : 'scale-100 bg-white shadow-clay-card'
             }`}
             onClick={toggleBreathing}
