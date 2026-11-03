@@ -6,6 +6,7 @@ import { ReasonsBento } from './components/ReasonsBento';
 import { DateNightRoulette } from './components/DateNightRoulette';
 import { ClayRadio } from './components/ClayRadio';
 import { SecretWishJar } from './components/SecretWishJar';
+import { RecoveryProtocol } from './components/RecoveryProtocol';
 import { Footer } from './components/Footer';
 
 interface FloatingItem {
@@ -16,11 +17,12 @@ interface FloatingItem {
 }
 
 export function App() {
+  const [activeTab, setActiveTab] = useState<'lounge' | 'recovery'>('recovery');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [floatingItems, setFloatingItems] = useState<FloatingItem[]>([]);
 
   const handlePoke = () => {
-    const emojis = ['👉', '🍟', '🥐', '🧋', '👾', '✨', '⚡', '☕'];
+    const emojis = ['👉', '🍵', '🥐', '🧋', '👾', '✨', '⚡', '💊', '🎾'];
     const newItems: FloatingItem[] = Array.from({ length: 5 }).map((_, i) => ({
       id: Date.now() + i,
       x: 15 + Math.random() * 70, // %
@@ -72,20 +74,28 @@ export function App() {
         }
       `}</style>
 
-      {/* Main Content Sections */}
+      {/* Header with Navigation Tabs */}
       <Header
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         onPoke={handlePoke}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
       />
 
       <main className="space-y-4">
-        <Hero />
-        <OpenWhenLetters />
-        <ReasonsBento />
-        <DateNightRoulette />
-        <ClayRadio />
-        <SecretWishJar />
+        {activeTab === 'recovery' ? (
+          <RecoveryProtocol />
+        ) : (
+          <>
+            <Hero />
+            <OpenWhenLetters />
+            <ReasonsBento />
+            <DateNightRoulette />
+            <ClayRadio />
+            <SecretWishJar />
+          </>
+        )}
       </main>
 
       <Footer />
