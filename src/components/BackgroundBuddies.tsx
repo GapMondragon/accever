@@ -203,13 +203,13 @@ export const BackgroundBuddies: React.FC = () => {
     {
       id: 'anya',
       x: 180,
-      y: 220,
+      y: 420,
       vx: 0,
       vy: 0,
       facing: 1,
       isDragging: false,
       isGrounded: true,
-      groundedPlatformId: 'platform-overview',
+      groundedPlatformId: 'platform-vitals',
       currentAction: 'walk',
       speechText: null,
       speechTimeout: null,
@@ -219,13 +219,13 @@ export const BackgroundBuddies: React.FC = () => {
     {
       id: 'bond',
       x: 360,
-      y: 220,
+      y: 420,
       vx: 0,
       vy: 0,
       facing: 1,
       isDragging: false,
       isGrounded: true,
-      groundedPlatformId: 'platform-overview',
+      groundedPlatformId: 'platform-vitals',
       currentAction: 'idle',
       speechText: null,
       speechTimeout: null,
@@ -235,13 +235,13 @@ export const BackgroundBuddies: React.FC = () => {
     {
       id: 'totodile',
       x: 520,
-      y: 420,
+      y: 780,
       vx: 0,
       vy: 0,
       facing: -1,
       isDragging: false,
       isGrounded: true,
-      groundedPlatformId: 'platform-vitals',
+      groundedPlatformId: 'platform-postures',
       currentAction: 'happy_dance',
       speechText: null,
       speechTimeout: null,
@@ -282,10 +282,15 @@ export const BackgroundBuddies: React.FC = () => {
 
     elements.forEach((el, idx) => {
       // Exclude menu and buddy containers to avoid feedback loops
+      // Exclude clinical overview banner and any element with data-buddy-platform="false"
       if (
         el.closest('#buddy-menu-root') ||
         el.closest('#buddy-actors-layer') ||
-        el.closest('#buddy-perch-decor')
+        el.closest('#buddy-perch-decor') ||
+        el.getAttribute('data-buddy-platform') === 'false' ||
+        el.closest('[data-buddy-platform="false"]') ||
+        el.id === 'clinical-overview-banner' ||
+        el.id === 'platform-overview'
       ) {
         return;
       }
@@ -362,9 +367,9 @@ export const BackgroundBuddies: React.FC = () => {
   useEffect(() => {
     if (hasInitializedPositions.current || platforms.length < 2) return;
 
-    // Match buddies to appropriate initial platforms
-    const overviewPlat = platforms.find((p) => p.id === 'platform-overview') || platforms[0];
-    const vitalsPlat = platforms.find((p) => p.id === 'platform-vitals') || platforms[1] || overviewPlat;
+    // Match buddies to appropriate initial platforms (excluding overview banner)
+    const vitalsPlat = platforms.find((p) => p.id === 'platform-vitals') || platforms[0];
+    const posturesPlat = platforms.find((p) => p.id === 'platform-postures') || vitalsPlat;
     const skyPerch = platforms.find((p) => p.id === 'perch-cloud');
 
     setBuddies((prev) =>
@@ -372,32 +377,32 @@ export const BackgroundBuddies: React.FC = () => {
         if (b.id === 'anya') {
           return {
             ...b,
-            x: overviewPlat.left + Math.min(120, overviewPlat.width * 0.25),
-            y: overviewPlat.top,
-            isGrounded: true,
-            groundedPlatformId: overviewPlat.id,
-          };
-        }
-        if (b.id === 'bond') {
-          return {
-            ...b,
-            x: overviewPlat.left + Math.min(260, overviewPlat.width * 0.55),
-            y: overviewPlat.top,
-            isGrounded: true,
-            groundedPlatformId: overviewPlat.id,
-          };
-        }
-        if (b.id === 'totodile') {
-          return {
-            ...b,
-            x: vitalsPlat.left + Math.min(180, vitalsPlat.width * 0.4),
+            x: vitalsPlat.left + Math.min(120, vitalsPlat.width * 0.25),
             y: vitalsPlat.top,
             isGrounded: true,
             groundedPlatformId: vitalsPlat.id,
           };
         }
+        if (b.id === 'bond') {
+          return {
+            ...b,
+            x: vitalsPlat.left + Math.min(260, vitalsPlat.width * 0.55),
+            y: vitalsPlat.top,
+            isGrounded: true,
+            groundedPlatformId: vitalsPlat.id,
+          };
+        }
+        if (b.id === 'totodile') {
+          return {
+            ...b,
+            x: posturesPlat.left + Math.min(180, posturesPlat.width * 0.4),
+            y: posturesPlat.top,
+            isGrounded: true,
+            groundedPlatformId: posturesPlat.id,
+          };
+        }
         if (b.id === 'cinnamoroll') {
-          const target = skyPerch || overviewPlat;
+          const target = skyPerch || vitalsPlat;
           return {
             ...b,
             x: target.left + target.width * 0.5,

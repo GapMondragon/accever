@@ -10,9 +10,8 @@ export const RecoveryProtocol: React.FC = () => {
     <div className="max-w-5xl mx-auto px-2.5 sm:px-4 space-y-6 sm:space-y-8 mb-16 animate-fade-in">
       {/* 1. Header & Clinical Scenario Overview Banner */}
       <div
-        id="platform-overview"
-        data-buddy-platform="true"
-        data-platform-name="Overview Banner"
+        id="clinical-overview-banner"
+        data-buddy-platform="false"
         className="rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-violet-200/90 via-sky-100/90 to-emerald-100/90 p-4 sm:p-8 shadow-clay-card border-none relative overflow-hidden"
       >
         <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3 sm:mb-4">
