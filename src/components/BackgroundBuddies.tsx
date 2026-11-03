@@ -368,7 +368,7 @@ export const BackgroundBuddies: React.FC = () => {
                   <img
                     src={gifSrc}
                     alt={`${cfg.name} (${buddy.currentAction})`}
-                    className="w-14 h-14 sm:w-20 sm:h-20 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] image-pixelated pointer-events-none"
+                    className="h-14 sm:h-20 w-auto max-w-[90px] sm:max-w-[125px] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] image-pixelated pointer-events-none"
                     loading="eager"
                   />
                 </div>
