@@ -1,41 +1,47 @@
-# Accever 💕 // Tactile Claymorphism Website for My Girlfriend
+# Accever 👾 // Tactile Claymorphism Co-Op Hub & Recovery Protocol
 
-A cute, interactive, tactile 3D Claymorphism website designed with love. Styled and built strictly using the aesthetic design tokens, prompts, and component anatomy from [inspo.gapmondragon.dev](https://inspo.gapmondragon.dev).
+A cute, tactile 3D Claymorphism website designed with care. Built using tactile clay aesthetic design tokens from [inspo.gapmondragon.dev](https://inspo.gapmondragon.dev). 
+
+Live site: [https://accever.gapmondragon.dev](https://accever.gapmondragon.dev)
 
 ---
 
-## ✨ Claymorphism Aesthetic & Features
+## 🩺 Active Clinical Mode: Acute Recovery Protocol
 
-- **Chassis & Surface Physics**: High-volume squircle surfaces (`rounded-[28px]` to `rounded-[36px]`, `rounded-3xl`) with no hard borders.
+Created to support post-tennis recovery (addressing acute hypovolemia, dehydration, and postprandial splanchnic blood pooling after a heavy meal):
+
+1. **Vitals Baseline & Target Alert Bar**: Resting Heart Rate (95–98 bpm ➔ &lt; 80 bpm), HRV (13 ms ➔ upward trend), Respiration Rate (21–23 brpm ➔ 12–16 brpm).
+2. **Anatomical Recovery Posture Visualizer**:
+   - **Modified Fowler's (35°–45° Incline)**: 3-pillow back ramp + sub-popliteal knee/calf cushion to elevate leg venous return while keeping the Lower Esophageal Sphincter (LES) elevated above acidic gastric chyme.
+   - **Left-Lateral Decubitus**: Gravitational stomach sump keeping sinigang acid safely in the greater curvature.
+   - **Contraindicated Postures**: Explains hazards of flat supine (0°), Trendelenburg, and right-lateral decubitus.
+3. **Visual Recovery Workflow Roadmap**: 3-Phase structured stepper (Phase 1: Safe Position 0–45m, Phase 2: Osmotic Absorption 45–60m, Phase 3: Staged Mobilization 60+m) with raw Mermaid.js view toggle.
+4. **Vagal Down-Regulation Breathing Coach**: Interactive 4s Inhale / 6s Exhale pacer with circular SVG progress animations, Web Audio calming chimes (432Hz/396Hz), and Zen mode.
+5. **Phase 2 & 3 Mobilization Guide**: Pocari Sweat micro-sip pacing guidelines (20–30 mL every 3–5 min) and 3-step orthostatic stabilization protocol (15x ankle pumps, 60s edge-of-bed pause, slow rise).
+
+---
+
+## 🎨 Claymorphism Aesthetic & Design Tokens
+
+- **Chassis & Surface Physics**: High-volume squircle surfaces (`rounded-[28px]` to `rounded-[36px]`, `rounded-3xl`) with no hard 1px borders.
 - **Dual Inset Shadows**: Opposing inner bevels (crisp white specular top-left highlight + saturated pastel bottom-right shade) combined with an ambient pastel outer drop shadow.
 - **Color Palette**:
   - Mist Backdrop: `#F5F3FF`
   - Pastel Clay Surfaces: Lavender (`#DDD6FE`), Mint (`#6EE7B7`), Bubblegum Rose (`#F9A8D4`), Butter Peach (`#FED7AA`), Sky Blue (`#BAE6FD`)
   - Typography: Deep Tinted Indigo (`#3B0764`) and Vivid Lilac (`#6B21A8`)
-- **Tactile Sound Effects**: Synthesized Web Audio API 600Hz–900Hz bouncy bubble pops and chime feedback on clicks and squishes (no external audio files needed).
-- **Interactive Modules**:
-  1. 🧸 **Tactile Header**: Live kiss counter, sound toggle, and heart confetti bursts.
-  2. 🌸 **Appreciation Hero**: Dynamic squishy Love-O-Meter (overclockable past 9999%!) & Daily Compliment Capsule Dispenser.
-  3. 💌 **"Open When..." Letter Box**: 6 tactile clay envelopes for different moods (stress, miss me, hungry, midnight thoughts, celebrations).
-  4. 🍱 **Reasons Bento Grid**: Tactile squircle cards with interactive heart counters.
-  5. 🎲 **Date Night Clay Roulette**: Eliminates decision fatigue with a single squishy spin.
-  6. 📻 **Retro Clay Radio**: Real synthesized lo-fi chord playback with animated clay visualizer bars.
-  7. 🏺 **Secret Wish Jar**: Recessed debossed input well with local storage persistence.
+- **Tactile Sound Effects**: Synthesized Web Audio API 600Hz–900Hz bouncy bubble pops and chimes (zero external audio files).
+- **Client-Side Only**: Entirely client-rendered and stateless in-memory (no database, no external tracking, no backend storage).
 
 ---
 
 ## 🚀 Cloudflare Pages Setup (Subdomain)
 
-1. Open **[Cloudflare Dashboard](https://dash.cloudflare.com/)** > **Workers & Pages**.
-2. Click **Create Application** > **Pages** > **Connect to Git**.
-3. Select the repository **`GapMondragon/accever`**.
-4. Configure build settings:
-   - **Framework Preset**: `Vite` (or `None`)
+1. Connected to GitHub repository **`GapMondragon/accever`**.
+2. Build settings:
+   - **Framework Preset**: `Vite`
    - **Build Command**: `npm run build`
    - **Build Output Directory**: `dist`
-5. Click **Save and Deploy**.
-6. Once deployed, go to **Custom domains** > **Set up a custom domain** (e.g. `accever.gapmondragon.dev`).
-   - Cloudflare will configure the DNS CNAME and SSL certificate automatically!
+3. Custom Domain: `accever.gapmondragon.dev`.
 
 ---
 

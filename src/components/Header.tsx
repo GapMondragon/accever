@@ -14,15 +14,12 @@ export const Header: React.FC<HeaderProps> = ({
   soundEnabled,
   setSoundEnabled,
 }) => {
-  const [pokeCount, setPokeCount] = useState<number>(() => {
-    return parseInt(localStorage.getItem('accever_pokes') || '14', 10);
-  });
+  const [pokeCount, setPokeCount] = useState<number>(14);
 
   const handlePokeClick = (e: React.MouseEvent) => {
     sound.playPop(750);
     const newCount = pokeCount + 1;
     setPokeCount(newCount);
-    localStorage.setItem('accever_pokes', newCount.toString());
 
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (rect.left + rect.width / 2) / window.innerWidth;

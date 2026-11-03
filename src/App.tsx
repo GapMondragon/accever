@@ -3,7 +3,7 @@ import { Header } from './components/Header';
 import { RecoveryProtocol } from './components/RecoveryProtocol';
 import { Footer } from './components/Footer';
 
-// Note: Duo Lounge components (Hero, OpenWhenLetters, ReasonsBento, DateNightRoulette, ClayRadio, SecretWishJar)
+// Note: Duo Lounge components (Hero, OpenWhenLetters, ReasonsBento, DateNightRoulette, ClayRadio)
 // are kept in src/components/ ready to be unhidden tomorrow.
 
 interface FloatingItem {
