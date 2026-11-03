@@ -250,8 +250,8 @@ export const BackgroundBuddies: React.FC = () => {
     },
     {
       id: 'cinnamoroll',
-      x: 750,
-      y: 140,
+      x: 680,
+      y: 460,
       vx: 0,
       vy: 0,
       facing: -1,
@@ -275,22 +275,29 @@ export const BackgroundBuddies: React.FC = () => {
     const scrollY = window.scrollY;
     const scrollX = window.scrollX;
 
+    // Minimum allowed platform height: must be at or below Vitals Dashboard
+    const vitalsEl = document.getElementById('platform-vitals');
+    const minAllowedTop = vitalsEl
+      ? vitalsEl.getBoundingClientRect().top + scrollY - 20
+      : 350;
+
     // 1. Elements marked with data-buddy-platform or card classes
     const elements = document.querySelectorAll<HTMLElement>(
       '[data-buddy-platform="true"], .shadow-clay-card'
     );
 
     elements.forEach((el, idx) => {
-      // Exclude menu and buddy containers to avoid feedback loops
-      // Exclude clinical overview banner and any element with data-buddy-platform="false"
+      // Exclude header, overview banner, menu, and buddy layers
       if (
+        el.closest('header') ||
         el.closest('#buddy-menu-root') ||
         el.closest('#buddy-actors-layer') ||
         el.closest('#buddy-perch-decor') ||
         el.getAttribute('data-buddy-platform') === 'false' ||
         el.closest('[data-buddy-platform="false"]') ||
         el.id === 'clinical-overview-banner' ||
-        el.id === 'platform-overview'
+        el.id === 'platform-overview' ||
+        el.id === 'platform-header'
       ) {
         return;
       }
@@ -301,6 +308,11 @@ export const BackgroundBuddies: React.FC = () => {
 
       const platTop = rect.top + scrollY;
       const platLeft = rect.left + scrollX;
+
+      // STRICT CHECK: Reject any platform positioned above the Vitals Dashboard
+      if (platTop < minAllowedTop) {
+        return;
+      }
 
       list.push({
         id: el.id || `section-platform-${idx}`,
@@ -491,6 +503,8 @@ export const BackgroundBuddies: React.FC = () => {
       lastTimeRef.current = now;
 
       const currentPlatforms = platformsRef.current;
+      const firstPlat = currentPlatforms[0];
+      const minAllowedY = firstPlat ? firstPlat.top - 35 : 350;
       const docWidth = Math.max(
         document.body.scrollWidth,
         document.documentElement.scrollWidth,
@@ -571,6 +585,11 @@ export const BackgroundBuddies: React.FC = () => {
             let newY = buddy.y + Math.sin(now / 700) * 0.75 + buddy.vy * dt;
             const newVy = buddy.vy * Math.pow(0.85, dt * 60);
 
+            // Ceiling clamp: never float up into header or overview banner
+            if (newY < minAllowedY) {
+              newY = minAllowedY;
+            }
+
             // Turn around at document edges
             if (newX < 35) {
               newX = 35;
@@ -596,8 +615,13 @@ export const BackgroundBuddies: React.FC = () => {
           const newVx = buddy.vx * airDrag;
 
           const oldY = buddy.y;
-          const proposedY = oldY + newVy * dt;
+          let proposedY = oldY + newVy * dt;
           let proposedX = buddy.x + newVx * dt;
+
+          // Ceiling clamp: never fly up into header or overview banner
+          if (proposedY < minAllowedY) {
+            proposedY = minAllowedY;
+          }
 
           // Screen horizontal clamping
           if (proposedX < 30) proposedX = 30;
@@ -726,8 +750,11 @@ export const BackgroundBuddies: React.FC = () => {
       tracker.hasMoved = true;
     }
 
+    const firstPlat = platformsRef.current[0];
+    const minAllowedY = firstPlat ? firstPlat.top - 35 : 350;
+
     const currentX = pageX - tracker.offsetX;
-    const currentY = pageY - tracker.offsetY;
+    const currentY = Math.max(minAllowedY, pageY - tracker.offsetY);
 
     // Measure throw velocity with exponential smoothing
     const instVx = (currentX - tracker.lastX) / dt;
@@ -952,13 +979,13 @@ export const BackgroundBuddies: React.FC = () => {
     <>
       {/* Dedicated Floating Visual Perches / Platforms */}
       <div id="buddy-perch-decor" className="pointer-events-none select-none">
-        {/* 1. Sky Cloud Perch (Top Right) */}
+        {/* 1. Sky Cloud Perch (Alongside Postures / Mid-Page) */}
         <div
           id="perch-cloud"
           data-buddy-platform="true"
           data-platform-name="Sky Cloud Perch"
           data-platform-type="perch"
-          style={{ top: '150px', right: '28px' }}
+          style={{ top: '680px', right: '28px' }}
           className="absolute z-20 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-clay-pill border-2 border-sky-100/80 text-sky-950 font-black text-xs animate-wave-sway pointer-events-auto cursor-default"
           title="Drag a buddy here to perch on the cloud!"
         >

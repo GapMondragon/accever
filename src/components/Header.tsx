@@ -48,9 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-2 sm:top-4 z-40 px-2 sm:px-4 mb-6 sm:mb-8">
       <div
-        id="platform-header"
-        data-buddy-platform="true"
-        data-platform-name="Header Bar"
+        data-buddy-platform="false"
         className="max-w-5xl mx-auto rounded-[24px] sm:rounded-[28px] bg-white/90 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-3 shadow-clay-card flex items-center justify-between gap-2 sm:gap-3"
       >
         {/* Brand Pill */}
