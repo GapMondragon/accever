@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* High-volume clay chassis directly mapped from inspo.gapmondragon.dev */
+  .clay-surface {
+    @apply rounded-[32px] border-none transition-all duration-300;
+    box-shadow: 0 16px 32px -4px rgba(109, 40, 217, 0.16),
+                inset 8px 8px 16px 0px rgba(255, 255, 255, 0.85),
+                inset -8px -8px 16px 0px rgba(109, 40, 217, 0.22);
+  }
+
+  .clay-surface-hover {
+    @apply transition-all duration-300;
+  }
+  .clay-surface-hover:hover {
+    transform: scale(1.03) translateY(-4px) rotate(-0.5deg);
+    box-shadow: 0 24px 44px -4px rgba(109, 40, 217, 0.22),
+                inset 8px 8px 16px 0px rgba(255, 255, 255, 0.95),
+                inset -8px -8px 16px 0px rgba(109, 40, 217, 0.28);
+  }
+
+  .clay-btn {
+    @apply inline-flex items-center justify-center font-extrabold rounded-2xl transition-all duration-200 cursor-pointer select-none active:scale-95 active:translate-y-1;
+  }
+
+  .clay-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+  }
+
+  /* Synthetic Squish on Active Press */
+  .clay-btn:active {
+    box-shadow: 0 4px 8px rgba(109, 40, 217, 0.15), inset 2px 2px 4px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Debossed wells for inputs & recessed trays */
+  .clay-debossed {
+    box-shadow: inset 4px 4px 8px rgba(109, 40, 217, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  }
+
+  /* Soft Ambient Noise Background */
+  .clay-bg-canvas {
+    background-color: #F5F3FF;
+    background-image: 
+      radial-gradient(at 10% 15%, rgba(221, 214, 254, 0.5) 0px, transparent 50%),
+      radial-gradient(at 90% 10%, rgba(249, 168, 212, 0.45) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(186, 230, 253, 0.4) 0px, transparent 60%),
+      radial-gradient(at 80% 85%, rgba(254, 215, 170, 0.45) 0px, transparent 50%),
+      radial-gradient(at 15% 80%, rgba(110, 231, 183, 0.45) 0px, transparent 50%);
+  }
+}
