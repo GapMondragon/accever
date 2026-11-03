@@ -1,38 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Droplet, Activity, CheckCircle, Clock, Check, ArrowRight } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { Droplet, Activity, CheckCircle, Clock } from 'lucide-react';
 import { sound } from '../utils/audio';
 
 export const MicroHydrationAndMobilization: React.FC = () => {
-  // Phase 2: Micro Hydration Timer
+  // Phase 2: Micro Hydration Pacer Timer (purely visual guidance countdown)
   const [sipTimer, setSipTimer] = useState(180); // 3 minutes
-  const [timerRunning, setTimerRunning] = useState(true);
-  const [sipsTaken, setSipsTaken] = useState(3);
-
-  // Phase 3: Mobilization checklist
-  const [anklePumps, setAnklePumps] = useState(0);
   const [edgeOfBedSeconds, setEdgeOfBedSeconds] = useState(60);
   const [pauseRunning, setPauseRunning] = useState(false);
-  const [mobilized, setMobilized] = useState(false);
 
-  // Sip Countdown
+  // Sip Countdown interval
   useEffect(() => {
-    let interval: number | null = null;
-    if (timerRunning) {
-      interval = window.setInterval(() => {
-        setSipTimer((prev) => {
-          if (prev <= 1) {
-            sound.playChime();
-            return 180; // reset to 3 mins
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [timerRunning]);
+    const interval = window.setInterval(() => {
+      setSipTimer((prev) => {
+        if (prev <= 1) {
+          sound.playChime();
+          return 180; // reset to 3 mins
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // 60-second edge-of-bed pause timer
   useEffect(() => {
@@ -53,27 +41,6 @@ export const MicroHydrationAndMobilization: React.FC = () => {
       if (interval) clearInterval(interval);
     };
   }, [pauseRunning, edgeOfBedSeconds]);
-
-  const handleLogSip = () => {
-    sound.playPop(750);
-    setSipsTaken((s) => s + 1);
-    setSipTimer(180); // reset countdown
-  };
-
-  const incrementAnklePump = () => {
-    sound.playPop(600 + Math.min(anklePumps * 20, 300));
-    setAnklePumps((p) => Math.min(p + 1, 15));
-  };
-
-  const handleFinishMobilization = () => {
-    sound.playChime();
-    setMobilized(true);
-    confetti({
-      particleCount: 30,
-      spread: 60,
-      colors: ['#6EE7B7', '#BAE6FD', '#DDD6FE'],
-    });
-  };
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
@@ -103,7 +70,7 @@ export const MicroHydrationAndMobilization: React.FC = () => {
             <strong>Rule:</strong> Do NOT chug. With a stomach full of sinigang and liver, large volumes will trigger gastric distension and acid reflux. Take <strong>one small micro-sip every 3–5 minutes</strong> so fluid moves continuously into blood plasma.
           </p>
 
-          {/* Sip Countdown Well */}
+          {/* Sip Countdown Display */}
           <div className="rounded-2xl bg-white/80 p-4 clay-debossed flex items-center justify-between">
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider text-sky-700 block">
@@ -114,13 +81,10 @@ export const MicroHydrationAndMobilization: React.FC = () => {
               </span>
             </div>
 
-            <button
-              onClick={handleLogSip}
-              className="clay-btn bg-sky-300 text-sky-950 px-4 py-2.5 text-xs shadow-clay-sky flex items-center gap-2"
-            >
-              <Droplet className="w-4 h-4 text-sky-800" />
-              <span>Log 1 Sip ({sipsTaken} logged)</span>
-            </button>
+            <div className="flex items-center gap-2 rounded-xl bg-sky-100 text-sky-950 px-3.5 py-2 text-xs font-bold shadow-clay-pill">
+              <Droplet className="w-4 h-4 text-sky-700" />
+              <span>1 Micro-Sip (20–30 mL)</span>
+            </div>
           </div>
         </div>
 
@@ -150,70 +114,48 @@ export const MicroHydrationAndMobilization: React.FC = () => {
           </p>
 
           <div className="space-y-3">
-            {/* Step 1: Ankle pumps */}
+            {/* Step 1: Ankle pumps - Clear Static Guideline */}
             <div className="rounded-2xl bg-white/80 p-3.5 clay-debossed flex items-center justify-between">
               <div>
                 <span className="text-xs font-extrabold text-violet-950 block">
                   1. Ankle Pumps (Calf Muscle Pump)
                 </span>
                 <span className="text-[11px] font-bold text-violet-700">
-                  {anklePumps}/15 pumps completed
+                  Perform 15 full flexions to push pooled venous blood upward
                 </span>
               </div>
-              <button
-                onClick={incrementAnklePump}
-                className={`clay-btn px-3 py-1.5 text-xs shadow-clay-pill ${
-                  anklePumps >= 15 ? 'bg-emerald-200 text-emerald-950' : 'bg-emerald-300 text-emerald-950'
-                }`}
-              >
-                {anklePumps >= 15 ? '✓ 15 Done' : '+1 Pump'}
-              </button>
+              <span className="rounded-full bg-emerald-100 text-emerald-950 px-3 py-1 text-xs font-black shadow-clay-pill">
+                15x Pumps
+              </span>
             </div>
 
-            {/* Step 2: 60s Edge of Bed Pause */}
+            {/* Step 2: 60s Edge of Bed Pause Timer */}
             <div className="rounded-2xl bg-white/80 p-3.5 clay-debossed flex items-center justify-between">
               <div>
                 <span className="text-xs font-extrabold text-violet-950 block">
-                  2. Edge-of-Bed Seated Pause (60s)
+                  2. Edge-of-Bed Seated Pause
                 </span>
                 <span className="text-[11px] font-bold text-violet-700">
-                  {edgeOfBedSeconds === 0 ? '✓ Ready to rise' : `${edgeOfBedSeconds}s remaining`}
+                  {edgeOfBedSeconds === 0 ? '✓ 60s completed — check dizziness' : 'Sit on edge of bed for 60s'}
                 </span>
               </div>
               <button
                 onClick={() => setPauseRunning(!pauseRunning)}
                 className="clay-btn bg-emerald-200 text-emerald-950 px-3 py-1.5 text-xs shadow-clay-pill"
               >
-                {edgeOfBedSeconds === 0 ? '✓ Finished' : pauseRunning ? 'Pause' : 'Start 60s'}
+                {edgeOfBedSeconds === 0 ? '✓ Ready' : pauseRunning ? `${edgeOfBedSeconds}s remaining` : 'Start 60s Pause'}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Clear to stand confirmation */}
-        <button
-          onClick={handleFinishMobilization}
-          disabled={anklePumps < 15 || edgeOfBedSeconds > 0 || mobilized}
-          className={`w-full clay-btn py-3 text-xs sm:text-sm shadow-clay-mint flex items-center justify-center gap-2 ${
-            mobilized
-              ? 'bg-emerald-400 text-emerald-950'
-              : anklePumps >= 15 && edgeOfBedSeconds === 0
-              ? 'bg-emerald-300 text-emerald-950 hover:bg-emerald-200'
-              : 'bg-gray-200 text-gray-500 cursor-not-allowed opacity-60'
-          }`}
-        >
-          {mobilized ? (
-            <>
-              <Check className="w-4 h-4 text-emerald-950" />
-              <span>Safe Mobilization Completed Successfully! 🌟</span>
-            </>
-          ) : (
-            <>
-              <span>Confirm Zero Dizziness & Stand Up Slowly</span>
-              <ArrowRight className="w-4 h-4" />
-            </>
-          )}
-        </button>
+        {/* Clear to stand confirmation guideline */}
+        <div className="rounded-2xl bg-emerald-100/90 border border-emerald-300 p-4 flex items-center gap-3">
+          <CheckCircle className="w-5 h-5 text-emerald-700 shrink-0" />
+          <p className="text-xs font-bold text-emerald-950 leading-relaxed">
+            <strong>Slow Rise Protocol:</strong> Stand up slowly while holding onto bed or wall. If lightheadedness, tunnel vision, or nausea occurs, sit back down immediately.
+          </p>
+        </div>
       </div>
     </div>
   );
