@@ -106,4 +106,10 @@
     animation: waveSway 3s ease-in-out infinite;
     transform-origin: center;
   }
+
+  .image-pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
 }

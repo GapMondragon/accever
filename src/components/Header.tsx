@@ -75,18 +75,18 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={toggleSound}
             title={soundEnabled ? "Mute soothing pop sounds" : "Enable soothing pop sounds"}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-violet-100/90 text-violet-800 shadow-clay-lavender flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer clay-btn"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-violet-100/90 text-violet-800 shadow-clay-lavender flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer clay-btn touch-manipulation"
           >
             {soundEnabled ? (
-              <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-700" />
+              <Volume2 className="w-4 h-4 text-violet-700" />
             ) : (
-              <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-400" />
+              <VolumeX className="w-4 h-4 text-violet-400" />
             )}
           </button>
 
           <button
             onClick={handlePokeClick}
-            className="clay-btn bg-emerald-300 text-emerald-950 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs shadow-clay-mint hover:bg-emerald-200 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"
+            className="clay-btn min-h-[36px] sm:min-h-[40px] bg-emerald-300 text-emerald-950 px-2.5 sm:px-3.5 py-1.5 text-[11px] sm:text-xs shadow-clay-mint hover:bg-emerald-200 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap touch-manipulation"
           >
             <span className="hidden xs:inline">Poke Gabe 👉</span>
             <span className="xs:hidden">👉</span>

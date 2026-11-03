@@ -359,15 +359,16 @@ export const BackgroundBuddies: React.FC = () => {
 
                 {/* Character GIF */}
                 <div
-                  className="transition-transform duration-200 group-hover:scale-115 group-active:scale-95"
+                  className="transition-transform duration-200 group-hover:scale-110 group-active:scale-95 touch-manipulation"
                   style={{
                     transform: `scaleX(${buddy.direction})`,
+                    touchAction: 'pan-y',
                   }}
                 >
                   <img
                     src={gifSrc}
                     alt={`${cfg.name} (${buddy.currentAction})`}
-                    className="w-14 h-14 sm:w-20 sm:h-20 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] image-rendering-pixelated"
+                    className="w-14 h-14 sm:w-20 sm:h-20 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] image-pixelated pointer-events-none"
                     loading="eager"
                   />
                 </div>
@@ -378,10 +379,10 @@ export const BackgroundBuddies: React.FC = () => {
       )}
 
       {/* Floating Character Chooser Button & Menu in Bottom Corner */}
-      <div ref={menuRef} className="fixed bottom-4 right-4 z-40">
+      <div ref={menuRef} className="fixed bottom-4 right-4 z-40 touch-manipulation">
         {/* Popover Selection Menu */}
         {menuOpen && (
-          <div className="absolute bottom-13 right-0 mb-2 w-56 sm:w-64 rounded-[28px] bg-white/95 backdrop-blur-md p-3 shadow-clay-card border border-rose-100 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="absolute bottom-14 sm:bottom-16 right-0 mb-2 w-60 sm:w-68 max-h-[75vh] overflow-y-auto rounded-[28px] bg-white/95 backdrop-blur-md p-3 shadow-clay-card border border-rose-100 animate-in fade-in slide-in-from-bottom-2 duration-200">
             <div className="flex items-center justify-between px-2.5 py-1 mb-2 border-b border-rose-100/70">
               <span className="text-xs font-black uppercase tracking-wider text-rose-950 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-rose-500" />
