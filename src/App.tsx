@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { OpenWhenLetters } from './components/OpenWhenLetters';
-import { ReasonsBento } from './components/ReasonsBento';
-import { DateNightRoulette } from './components/DateNightRoulette';
-import { ClayRadio } from './components/ClayRadio';
-import { SecretWishJar } from './components/SecretWishJar';
 import { RecoveryProtocol } from './components/RecoveryProtocol';
 import { Footer } from './components/Footer';
+
+// Note: Duo Lounge components (Hero, OpenWhenLetters, ReasonsBento, DateNightRoulette, ClayRadio, SecretWishJar)
+// are kept in src/components/ ready to be unhidden tomorrow.
 
 interface FloatingItem {
   id: number;
@@ -17,7 +14,6 @@ interface FloatingItem {
 }
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'lounge' | 'recovery'>('recovery');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [floatingItems, setFloatingItems] = useState<FloatingItem[]>([]);
 
@@ -38,7 +34,7 @@ export function App() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden selection:bg-violet-300 selection:text-violet-950 font-bubble">
+    <div className="relative min-h-screen overflow-x-hidden selection:bg-rose-200 selection:text-rose-950 font-bubble">
       {/* Soft Ambient Clay Light Orbs */}
       <div className="fixed top-12 left-10 w-96 h-96 rounded-full bg-violet-200/40 blur-3xl pointer-events-none -z-10" />
       <div className="fixed top-1/3 right-10 w-96 h-96 rounded-full bg-emerald-200/35 blur-3xl pointer-events-none -z-10" />
@@ -74,28 +70,16 @@ export function App() {
         }
       `}</style>
 
-      {/* Header with Navigation Tabs */}
+      {/* Header */}
       <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
         onPoke={handlePoke}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
       />
 
+      {/* Main Healing View */}
       <main className="space-y-4">
-        {activeTab === 'recovery' ? (
-          <RecoveryProtocol />
-        ) : (
-          <>
-            <Hero />
-            <OpenWhenLetters />
-            <ReasonsBento />
-            <DateNightRoulette />
-            <ClayRadio />
-            <SecretWishJar />
-          </>
-        )}
+        <RecoveryProtocol />
       </main>
 
       <Footer />
