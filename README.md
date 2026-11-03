@@ -31,6 +31,11 @@ Created to support post-tennis recovery (addressing acute hypovolemia, dehydrati
   - Typography: Deep Tinted Indigo (`#3B0764`) and Vivid Lilac (`#6B21A8`)
 - **Tactile Sound Effects**: Synthesized Web Audio API 600Hz–900Hz bouncy bubble pops and chimes (zero external audio files).
 - **Client-Side Only**: Entirely client-rendered and stateless in-memory (no database, no external tracking, no backend storage).
+- **Mobile Responsive & Touch-First**:
+  - Fluid SVG anatomical diagrams with dynamic inline rotation (`viewBox="0 0 520 290"`) that adapt down to 320px mobile screens without horizontal clipping.
+  - Finger-friendly touch targets with responsive grids (`min-h-[42px]`) for angle presets and hotspot inspection pills.
+  - Touch-optimized duration selectors and circular breathing progress rings.
+  - Safe-area header pill layout with adaptive brand text for small mobile viewports.
 
 ---
 
