@@ -1,41 +1,41 @@
 import React, { useState } from 'react';
-import { Heart, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from '../utils/audio';
 
 interface HeaderProps {
-  onSendKiss: () => void;
+  onPoke: () => void;
   soundEnabled: boolean;
   setSoundEnabled: (val: boolean) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onSendKiss, soundEnabled, setSoundEnabled }) => {
-  const [kissCount, setKissCount] = useState<number>(() => {
-    return parseInt(localStorage.getItem('accever_kisses') || '28', 10);
+export const Header: React.FC<HeaderProps> = ({ onPoke, soundEnabled, setSoundEnabled }) => {
+  const [pokeCount, setPokeCount] = useState<number>(() => {
+    return parseInt(localStorage.getItem('accever_pokes') || '14', 10);
   });
 
-  const handleKissClick = (e: React.MouseEvent) => {
+  const handlePokeClick = (e: React.MouseEvent) => {
     sound.playPop(750);
-    const newCount = kissCount + 1;
-    setKissCount(newCount);
-    localStorage.setItem('accever_kisses', newCount.toString());
+    const newCount = pokeCount + 1;
+    setPokeCount(newCount);
+    localStorage.setItem('accever_pokes', newCount.toString());
 
-    // Fire cute heart confetti burst
+    // Fun confetti burst
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (rect.left + rect.width / 2) / window.innerWidth;
     const y = (rect.top + rect.height / 2) / window.innerHeight;
 
     confetti({
       origin: { x, y },
-      particleCount: 28,
-      spread: 60,
-      startVelocity: 25,
-      colors: ['#F9A8D4', '#DDD6FE', '#F472B6', '#6EE7B7'],
+      particleCount: 22,
+      spread: 50,
+      startVelocity: 22,
+      colors: ['#DDD6FE', '#6EE7B7', '#FED7AA', '#BAE6FD', '#F9A8D4'],
       shapes: ['circle'],
-      scalar: 1.2,
+      scalar: 1.1,
     });
 
-    onSendKiss();
+    onPoke();
   };
 
   const toggleSound = () => {
@@ -47,24 +47,24 @@ export const Header: React.FC<HeaderProps> = ({ onSendKiss, soundEnabled, setSou
 
   return (
     <header className="sticky top-4 z-40 px-4 mb-8">
-      <div className="max-w-5xl mx-auto rounded-[28px] bg-white/80 backdrop-blur-md px-4 sm:px-6 py-3.5 shadow-clay-card flex items-center justify-between gap-3">
+      <div className="max-w-5xl mx-auto rounded-[28px] bg-white/85 backdrop-blur-md px-4 sm:px-6 py-3.5 shadow-clay-card flex items-center justify-between gap-3">
         {/* Brand / Title Pill */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-pink-200 shadow-clay-rose flex items-center justify-center text-xl select-none transition-transform hover:scale-110 active:scale-95 cursor-pointer">
-            🧸
+          <div className="w-11 h-11 rounded-2xl bg-violet-200 shadow-clay-lavender flex items-center justify-center text-xl select-none transition-transform hover:scale-110 active:scale-95 cursor-pointer">
+            👾
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-sm sm:text-base tracking-tight text-clay-indigo-dark">
-                Accever
+                Accever & Gabe
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 text-pink-700 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-clay-pill">
-                <Sparkles className="w-2.5 h-2.5 text-pink-500 fill-pink-500 animate-wiggle" />
-                Favorite Human
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 text-violet-800 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-clay-pill-lavender">
+                <Sparkles className="w-2.5 h-2.5 text-violet-600 animate-wiggle" />
+                Partner in Crime HQ
               </span>
             </div>
             <p className="text-[11px] font-semibold text-violet-700/80 hidden sm:block">
-              Made with infinite clay & hugs by Gabe ✨
+              Tactile lounge & emergency decision center
             </p>
           </div>
         </div>
@@ -84,15 +84,14 @@ export const Header: React.FC<HeaderProps> = ({ onSendKiss, soundEnabled, setSou
             )}
           </button>
 
-          {/* Quick Kiss / Hug Button */}
+          {/* Poke Gabe Button */}
           <button
-            onClick={handleKissClick}
-            className="clay-btn bg-pink-300 text-pink-950 px-3.5 sm:px-4 py-2 text-xs shadow-clay-rose-btn hover:bg-pink-200 flex items-center gap-2"
+            onClick={handlePokeClick}
+            className="clay-btn bg-emerald-300 text-emerald-950 px-3.5 sm:px-4 py-2 text-xs shadow-clay-mint hover:bg-emerald-200 flex items-center gap-2"
           >
-            <Heart className="w-4 h-4 text-pink-600 fill-pink-500 animate-pulse-subtle" />
-            <span className="hidden xs:inline">Send Kiss</span>
-            <span className="rounded-full bg-pink-400/40 text-pink-950 px-2 py-0.5 text-[10px] font-black">
-              {kissCount}
+            <span>Poke Gabe 👉</span>
+            <span className="rounded-full bg-emerald-400/40 text-emerald-950 px-2 py-0.5 text-[10px] font-black">
+              {pokeCount}
             </span>
           </button>
         </div>

@@ -8,53 +8,53 @@ import { ClayRadio } from './components/ClayRadio';
 import { SecretWishJar } from './components/SecretWishJar';
 import { Footer } from './components/Footer';
 
-interface FloatingHeart {
+interface FloatingItem {
   id: number;
   x: number;
   size: number;
-  color: string;
+  emoji: string;
 }
 
 export function App() {
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
+  const [floatingItems, setFloatingItems] = useState<FloatingItem[]>([]);
 
-  const handleSendKiss = () => {
-    const colors = ['#F9A8D4', '#DDD6FE', '#6EE7B7', '#FED7AA', '#F472B6'];
-    const newHearts: FloatingHeart[] = Array.from({ length: 6 }).map((_, i) => ({
+  const handlePoke = () => {
+    const emojis = ['👉', '🍟', '🥐', '🧋', '👾', '✨', '⚡', '☕'];
+    const newItems: FloatingItem[] = Array.from({ length: 5 }).map((_, i) => ({
       id: Date.now() + i,
-      x: 10 + Math.random() * 80, // %
-      size: 20 + Math.random() * 24,
-      color: colors[Math.floor(Math.random() * colors.length)],
+      x: 15 + Math.random() * 70, // %
+      size: 22 + Math.random() * 20,
+      emoji: emojis[Math.floor(Math.random() * emojis.length)],
     }));
 
-    setFloatingHearts((prev) => [...prev, ...newHearts]);
+    setFloatingItems((prev) => [...prev, ...newItems]);
 
     setTimeout(() => {
-      setFloatingHearts((prev) => prev.filter((h) => !newHearts.some((nh) => nh.id === h.id)));
-    }, 2500);
+      setFloatingItems((prev) => prev.filter((item) => !newItems.some((ni) => ni.id === item.id)));
+    }, 2400);
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden selection:bg-pink-300 selection:text-pink-950 font-bubble">
+    <div className="relative min-h-screen overflow-x-hidden selection:bg-violet-300 selection:text-violet-950 font-bubble">
       {/* Soft Ambient Clay Light Orbs */}
       <div className="fixed top-12 left-10 w-96 h-96 rounded-full bg-violet-200/40 blur-3xl pointer-events-none -z-10" />
-      <div className="fixed top-1/3 right-10 w-96 h-96 rounded-full bg-pink-200/40 blur-3xl pointer-events-none -z-10" />
+      <div className="fixed top-1/3 right-10 w-96 h-96 rounded-full bg-emerald-200/35 blur-3xl pointer-events-none -z-10" />
       <div className="fixed bottom-10 left-1/4 w-96 h-96 rounded-full bg-sky-200/40 blur-3xl pointer-events-none -z-10" />
 
-      {/* Floating Kisses & Hearts Layer */}
-      {floatingHearts.map((heart) => (
+      {/* Floating Emojis Layer */}
+      {floatingItems.map((item) => (
         <div
-          key={heart.id}
-          className="fixed pointer-events-none z-50 animate-float-slow transition-opacity duration-1000"
+          key={item.id}
+          className="fixed pointer-events-none z-50 select-none"
           style={{
-            left: `${heart.x}%`,
-            bottom: '20px',
-            fontSize: `${heart.size}px`,
+            left: `${item.x}%`,
+            bottom: '25px',
+            fontSize: `${item.size}px`,
             animation: 'flyUp 2.4s ease-out forwards',
           }}
         >
-          💖
+          {item.emoji}
         </div>
       ))}
 
@@ -62,11 +62,11 @@ export function App() {
       <style>{`
         @keyframes flyUp {
           0% {
-            transform: translateY(0) scale(0.5);
+            transform: translateY(0) scale(0.6);
             opacity: 1;
           }
           100% {
-            transform: translateY(-80vh) scale(1.3) rotate(${Math.random() > 0.5 ? 20 : -20}deg);
+            transform: translateY(-80vh) scale(1.2) rotate(${Math.random() > 0.5 ? 25 : -25}deg);
             opacity: 0;
           }
         }
@@ -74,7 +74,7 @@ export function App() {
 
       {/* Main Content Sections */}
       <Header
-        onSendKiss={handleSendKiss}
+        onPoke={handlePoke}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
       />

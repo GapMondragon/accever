@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Compass, Check, RefreshCw, Heart } from 'lucide-react';
+import { Compass, Check, RefreshCw, Utensils } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from '../utils/audio';
 
@@ -16,55 +16,55 @@ interface DateIdea {
 const DATE_IDEAS: DateIdea[] = [
   {
     id: 1,
-    category: 'Foodie Date',
-    title: 'Warm Ramen & Sweet Boba Hop',
+    category: 'The Inevitable',
+    title: 'The Usual Ramen Spot',
     emoji: '🍜',
-    description: 'Slurping rich piping hot tonkotsu ramen followed by our favorite brown sugar boba milk tea.',
+    description: 'Let us stop pretending we are going to try a new place. We both know we want rich piping hot tonkotsu broth and extra chashu.',
     colorClass: 'bg-amber-200',
     shadowClass: 'shadow-clay-peach',
   },
   {
     id: 2,
-    category: 'Ultra Cozy',
-    title: 'Blanket Fort & Ghibli Movie Night',
-    emoji: '🏰',
-    description: 'Building an epic pillow/blanket fortress with fairy lights, lots of snacks, and Studio Ghibli.',
+    category: 'Couch Potato Special',
+    title: 'Pizza & Binge-Watching Re-runs',
+    emoji: '🍕',
+    description: 'Ordering pizza, sweatpants on, re-watching a comedy series we have both seen 3 times already.',
     colorClass: 'bg-pink-200',
     shadowClass: 'shadow-clay-rose',
   },
   {
     id: 3,
-    category: 'Sweet & Romantic',
-    title: 'Sunset Walk & Ice Cream Cones',
-    emoji: '🌅',
-    description: 'Golden hour walk holding hands, grabbing waffle cones with double scoops of matcha & strawberry.',
+    category: 'Aimless Wanderers',
+    title: 'Coffee & Window Shopping',
+    emoji: '☕',
+    description: 'Grabbing iced lattes and strolling around looking at clothes, books, and home goods we have zero intention of purchasing.',
     colorClass: 'bg-violet-200',
     shadowClass: 'shadow-clay-lavender',
   },
   {
     id: 4,
-    category: 'Playful Adventure',
-    title: 'Arcade / Claw Machine Challenge',
+    category: 'Financial Mistake',
+    title: 'Claw Machine & Arcade Challenge',
     emoji: '🕹️',
-    description: 'Winning cute plushies from the claw machines, playing air hockey, and taking photobooth snapshots.',
+    description: 'Spending $25 on tokens to win a poorly stuffed $2 Pikachu plushie from a rigged claw machine. Worth it every time.',
     colorClass: 'bg-emerald-200',
     shadowClass: 'shadow-clay-mint',
   },
   {
     id: 5,
-    category: 'Home Cooking',
-    title: 'DIY Pizza & Fun Dessert Baking',
-    emoji: '🍕',
-    description: 'Putting on aprons, making weirdly shaped homemade pizzas, and baking chocolate chip cookies together.',
+    category: 'Late Night Run',
+    title: '11 PM Convenience Store Feast',
+    emoji: '🏪',
+    description: 'Walking in pajamas to 7-Eleven or the supermarket at 11 PM to debate which sour candy and chip flavor reigns supreme.',
     colorClass: 'bg-sky-200',
     shadowClass: 'shadow-clay-sky',
   },
   {
     id: 6,
-    category: 'Late Night Chill',
-    title: 'Late Night Drive & Playlist Singalong',
+    category: 'Scenic & Chill',
+    title: 'Drive with the Aux & No Destination',
     emoji: '🚗',
-    description: 'Windows cracked, empty roads, cool evening breeze, screaming along to our favorite songs at the top of our lungs.',
+    description: 'Windows cracked, empty road, taking turns picking songs and judging each other’s musical nostalgia.',
     colorClass: 'bg-violet-300',
     shadowClass: 'shadow-clay-lavender',
   },
@@ -80,7 +80,6 @@ export const DateNightRoulette: React.FC = () => {
     setLockedIn(false);
     setIsSpinning(true);
 
-    // Audio bouncy sound loop
     let counter = 0;
     const interval = setInterval(() => {
       sound.playPop(500 + (counter % 5) * 80);
@@ -104,9 +103,9 @@ export const DateNightRoulette: React.FC = () => {
         x: (rect.left + rect.width / 2) / window.innerWidth,
         y: (rect.top + rect.height / 2) / window.innerHeight,
       },
-      particleCount: 30,
+      particleCount: 25,
       spread: 60,
-      colors: ['#F9A8D4', '#DDD6FE', '#6EE7B7', '#FED7AA'],
+      colors: ['#6EE7B7', '#DDD6FE', '#FED7AA', '#BAE6FD'],
     });
   };
 
@@ -120,7 +119,7 @@ export const DateNightRoulette: React.FC = () => {
             Decision Fatigue Eliminator
           </div>
           <span className="text-xs font-bold text-emerald-900/70">
-            Never argue about "I don't know, you pick" again! 🎯
+            Terminating the 40-minute "I don't know, what do you want?" cycle 🎯
           </span>
         </div>
 
@@ -128,10 +127,10 @@ export const DateNightRoulette: React.FC = () => {
           {/* Left Description & Controls */}
           <div className="md:col-span-6 space-y-4">
             <h2 className="text-2xl sm:text-3xl font-black text-clay-indigo-dark tracking-tight leading-tight">
-              Date Night Clay Roulette 🎲
+              What Are We Doing? (The Stand-off) 🎲
             </h2>
             <p className="text-xs sm:text-sm font-semibold text-emerald-950/80 leading-relaxed">
-              Stuck on what we should do? Click the squishy button and let the universe pick our next adventure together.
+              Whenever neither of us wants to make an executive decision, spin the wheel and let mathematical probability decide our fate.
             </p>
 
             <div className="pt-2 flex flex-wrap gap-3">
@@ -141,26 +140,26 @@ export const DateNightRoulette: React.FC = () => {
                 className="clay-btn bg-emerald-400 text-emerald-950 px-5 py-3 text-xs sm:text-sm shadow-clay-mint flex items-center gap-2"
               >
                 <RefreshCw className={`w-4 h-4 text-emerald-800 ${isSpinning ? 'animate-spin' : ''}`} />
-                <span>{isSpinning ? 'Spinning the Clay Wheel...' : 'Spin the Wheel! 🎲'}</span>
+                <span>{isSpinning ? 'Spinning Randomizer...' : 'Spin the Decider! 🎲'}</span>
               </button>
 
               <button
                 onClick={handleLockIn}
                 className={`clay-btn px-4 py-3 text-xs sm:text-sm flex items-center gap-2 ${
                   lockedIn
-                    ? 'bg-pink-300 text-pink-950 shadow-clay-rose'
+                    ? 'bg-emerald-300 text-emerald-950 shadow-clay-mint'
                     : 'bg-white/80 text-violet-950 shadow-clay-pill hover:bg-white'
                 }`}
               >
                 {lockedIn ? (
                   <>
-                    <Check className="w-4 h-4 text-pink-700" />
-                    <span>It's a Date! Locked In 💕</span>
+                    <Check className="w-4 h-4 text-emerald-800" />
+                    <span>Plan Locked! No Takesies-Backsies 🤝</span>
                   </>
                 ) : (
                   <>
-                    <Heart className="w-4 h-4 text-pink-500 fill-pink-500" />
-                    <span>Lock This In!</span>
+                    <Utensils className="w-4 h-4 text-emerald-700" />
+                    <span>Lock In This Plan</span>
                   </>
                 )}
               </button>
@@ -192,9 +191,9 @@ export const DateNightRoulette: React.FC = () => {
 
               <div className="mt-5 pt-4 border-t border-black/5 flex items-center justify-between">
                 <span className="text-[11px] font-bold text-violet-800">
-                  Gabe will supply all snacks & cuddles ✨
+                  Certified mutually agreeable outing ✨
                 </span>
-                <span className="text-xs">👫</span>
+                <span className="text-xs">⚡</span>
               </div>
             </div>
           </div>
