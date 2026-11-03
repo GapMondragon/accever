@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldAlert, Check, Ban, HelpCircle, Compass, HeartPulse, ChevronRight } from 'lucide-react';
+import { ShieldAlert, Check, Ban, HelpCircle, HeartPulse, ChevronRight } from 'lucide-react';
 import { sound } from '../utils/audio';
 
 type PostureKey = 'fowlers' | 'left-lateral' | 'contraindicated';
