@@ -3,30 +3,7 @@ import { Activity, Heart, Wind } from 'lucide-react';
 import { PostureVisualizer } from './PostureVisualizer';
 import { VagalBreathingCoach } from './VagalBreathingCoach';
 import { MicroHydrationAndMobilization } from './MicroHydrationAndMobilization';
-import { MermaidDiagram } from './MermaidDiagram';
-
-const RECOVERY_MERMAID = `graph TD
-    A[Phase 1: Safe Position & Down-Regulation<br>0–45 Mins] --> B[Phase 2: Osmotic Absorption<br>45–60 Mins]
-    B --> C[Phase 3: Staged Mobilization<br>60+ Mins]
-
-    subgraph Phase 1: Anti-Reflux Elevation
-        A1[Torso Propped 30°–45°<br>Head & upper back elevated]
-        A2[Pillows Under Calves/Knees<br>Legs elevated for venous return]
-        A3[Alternative: Left-Side Recline<br>If fullness or nausea occurs]
-        A4[Vagal Breathing: 4s In / 6s Out]
-    end
-
-    subgraph Phase 2: Micro-Hydration
-        B1[Micro-sip Pocari Sweat<br>Small sips every 3–5 min]
-        B2[Gut transfers fluid to plasma]
-        B3[Log 2nd Garmin snapshot]
-    end
-
-    subgraph Phase 3: Orthostatic Mobilization
-        C1[15x Ankle pumps while seated]
-        C2[60-second edge-of-bed pause]
-        C3[Slow rise to stand]
-    end`;
+import { VisualRecoveryWorkflow } from './VisualRecoveryWorkflow';
 
 export const RecoveryProtocol: React.FC = () => {
   return (
@@ -65,7 +42,7 @@ export const RecoveryProtocol: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Real-Time Vitals & Baseline Alert Bar (Clear Clinical Reference Display) */}
+      {/* 2. Real-Time Vitals & Baseline Alert Bar (Clinical Metrics Display) */}
       <div className="rounded-[32px] bg-white/90 p-6 sm:p-7 shadow-clay-card space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
@@ -178,24 +155,8 @@ export const RecoveryProtocol: React.FC = () => {
       {/* 3. Anti-Reflux Posture Visualizer & Anatomical Guide */}
       <PostureVisualizer />
 
-      {/* 4. Visual Recovery Workflow Diagram (Mermaid.js) */}
-      <div className="rounded-[32px] bg-white/90 p-6 sm:p-8 shadow-clay-card space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2 border-b border-violet-100 pb-3">
-          <div>
-            <h3 className="text-lg font-black text-clay-indigo-dark">
-              Visual Recovery Workflow Diagram
-            </h3>
-            <p className="text-xs font-bold text-violet-700/80">
-              3-Phase clinical recovery path from down-regulation to safe mobilization
-            </p>
-          </div>
-          <span className="text-xs font-black text-violet-800 bg-violet-100 px-3 py-1 rounded-full shadow-clay-pill-lavender">
-            Clinical Flowchart
-          </span>
-        </div>
-
-        <MermaidDiagram chart={RECOVERY_MERMAID} />
-      </div>
+      {/* 4. Enhanced Visual Recovery Workflow Diagram (Tactile Clinical Blueprint + Raw Mermaid toggle) */}
+      <VisualRecoveryWorkflow />
 
       {/* 5. Vagal Down-Regulation Breathing App (4s In / 6s Out) */}
       <VagalBreathingCoach />
