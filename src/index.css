@@ -49,4 +49,61 @@
       radial-gradient(at 80% 85%, rgba(254, 215, 170, 0.45) 0px, transparent 50%),
       radial-gradient(at 15% 80%, rgba(110, 231, 183, 0.45) 0px, transparent 50%);
   }
+
+  /* inspo.gapmondragon.dev Flowing Stream & Beacon Glow Animations */
+  @keyframes flowDash {
+    from {
+      stroke-dashoffset: 40;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes flowDashReverse {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: 40;
+    }
+  }
+
+  @keyframes beaconPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(1.35);
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes waveSway {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-2px) rotate(1.5deg);
+    }
+  }
+
+  .animate-flow-dash {
+    animation: flowDash 1.2s linear infinite;
+  }
+
+  .animate-flow-dash-reverse {
+    animation: flowDashReverse 1.5s linear infinite;
+  }
+
+  .animate-beacon-pulse {
+    animation: beaconPulse 2s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .animate-wave-sway {
+    animation: waveSway 3s ease-in-out infinite;
+    transform-origin: center;
+  }
 }

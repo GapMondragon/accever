@@ -1,12 +1,32 @@
 import React, { useState } from 'react';
-import { ShieldAlert, Check, Ban, HelpCircle, HeartPulse, ChevronRight } from 'lucide-react';
+import {
+  ShieldAlert,
+  Check,
+  Ban,
+  HelpCircle,
+  HeartPulse,
+  ChevronRight,
+  Sliders,
+  Sparkles,
+  Info,
+  Layers,
+  ArrowRight
+} from 'lucide-react';
 import { sound } from '../utils/audio';
 
 type PostureKey = 'fowlers' | 'left-lateral' | 'contraindicated';
+type PinKey = 'pillows' | 'les' | 'stomach' | 'calves' | null;
 
 export const PostureVisualizer: React.FC = () => {
   const [selectedPosture, setSelectedPosture] = useState<PostureKey>('fowlers');
   const [showAnatomyExplainer, setShowAnatomyExplainer] = useState(false);
+  const [activePin, setActivePin] = useState<PinKey>('les');
+  const [simulatedAngle, setSimulatedAngle] = useState<number>(38); // 0 to 55 degrees
+  const [leftLateralView, setLeftLateralView] = useState<'left' | 'right'>('left');
+
+  // Angle evaluation helpers
+  const isDangerAngle = simulatedAngle < 28;
+  const isGoldenAngle = simulatedAngle >= 32 && simulatedAngle <= 48;
 
   return (
     <div className="rounded-[32px] bg-white/90 p-5 sm:p-8 shadow-clay-card border-none space-y-6">
@@ -42,7 +62,7 @@ export const PostureVisualizer: React.FC = () => {
                 sound.playPop(650);
                 setShowAnatomyExplainer(!showAnatomyExplainer);
               }}
-              className="text-xs font-bold text-violet-700 bg-violet-100 hover:bg-violet-200 px-2.5 py-1 rounded-full flex items-center gap-1 transition-all"
+              className="text-xs font-bold text-violet-700 bg-violet-100 hover:bg-violet-200 px-2.5 py-1 rounded-full flex items-center gap-1 transition-all clay-btn"
               title="Toggle Clinical Mechanics"
             >
               <HelpCircle className="w-3.5 h-3.5" />
@@ -50,7 +70,7 @@ export const PostureVisualizer: React.FC = () => {
             </button>
           </div>
           <p className="text-xs font-bold text-violet-700/80">
-            Select a posture below to inspect accurate body angles, pillow ramps, and gastric mechanics.
+            Interactive anatomical simulations with live fluid dynamics and inspection pins.
           </p>
         </div>
 
@@ -60,22 +80,24 @@ export const PostureVisualizer: React.FC = () => {
             onClick={() => {
               sound.playPop(700);
               setSelectedPosture('fowlers');
+              setActivePin('les');
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 clay-btn ${
               selectedPosture === 'fowlers'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            1. Modified Fowler's (35°–45°)
+            1. Modified Fowler's Simulator
           </button>
           <button
             onClick={() => {
               sound.playPop(750);
               setSelectedPosture('left-lateral');
+              setActivePin(null);
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 clay-btn ${
               selectedPosture === 'left-lateral'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
@@ -88,8 +110,9 @@ export const PostureVisualizer: React.FC = () => {
             onClick={() => {
               sound.playPop(600);
               setSelectedPosture('contraindicated');
+              setActivePin(null);
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex items-center gap-1.5 clay-btn ${
               selectedPosture === 'contraindicated'
                 ? 'bg-rose-50 text-rose-950 shadow-clay-pill border border-rose-200'
                 : 'text-rose-700 hover:text-rose-950'
@@ -103,7 +126,7 @@ export const PostureVisualizer: React.FC = () => {
 
       {/* Anatomy Mechanics Accordion */}
       {showAnatomyExplainer && (
-        <div className="rounded-2xl bg-violet-50/80 p-4.5 border border-violet-200/70 clay-debossed space-y-3">
+        <div className="rounded-2xl bg-violet-50/80 p-4.5 border border-violet-200/70 clay-debossed space-y-3 animate-fade-in">
           <div className="flex items-center gap-2">
             <HeartPulse className="w-4 h-4 text-violet-700" />
             <h4 className="text-xs sm:text-sm font-black text-violet-950">
@@ -127,108 +150,433 @@ export const PostureVisualizer: React.FC = () => {
         </div>
       )}
 
-      {/* POSTURE 1: MODIFIED FOWLER'S */}
+      {/* POSTURE 1: MODIFIED FOWLER'S WITH DYNAMIC ANGLE SIMULATOR */}
       {selectedPosture === 'fowlers' && (
-        <div className="rounded-2xl bg-gradient-to-br from-violet-50/70 to-emerald-50/70 p-5 sm:p-7 clay-debossed space-y-6">
-          <div className="flex flex-col lg:flex-row items-center gap-6">
-            {/* Medically Accurate Anatomical SVG */}
-            <div className="w-full lg:w-7/12 flex flex-col items-center">
-              <div className="w-full max-w-md bg-white/90 rounded-2xl p-4 shadow-sm border border-violet-100/80">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full">
-                    PRIMARY STABILIZATION POSTURE
-                  </span>
-                  <span className="text-[11px] font-black text-violet-900">
-                    Trunk: 35°–45° | Knees: 20°–30°
-                  </span>
-                </div>
-
-                <svg viewBox="0 0 500 280" className="w-full h-auto drop-shadow-sm select-none">
-                  {/* Bed Frame & Mattress */}
-                  <line x1="30" y1="240" x2="470" y2="240" stroke="#CBD5E1" strokeWidth="6" strokeLinecap="round" />
-                  <rect x="40" y="228" width="420" height="12" rx="4" fill="#E2E8F0" />
-
-                  {/* Pillow Ramp 1 & 2: Wedge Stack under Back */}
-                  {/* Base wedge pillow */}
-                  <polygon points="70,228 190,140 210,175 100,228" fill="#DDD6FE" stroke="#8B5CF6" strokeWidth="1.5" />
-                  {/* Top cervical pillow */}
-                  <polygon points="90,185 160,115 185,135 120,200" fill="#C4B5FD" stroke="#7C3AED" strokeWidth="1.5" />
-                  <text x="75" y="150" fontSize="11" fontWeight="bold" fill="#5B21B6">2–3 Back Pillows</text>
-                  <text x="80" y="163" fontSize="9" fontWeight="bold" fill="#6D28D9">(Creates 35°–45° Ramp)</text>
-
-                  {/* Sub-Popliteal / Calf Pillow under legs */}
-                  <ellipse cx="365" cy="205" rx="38" ry="16" fill="#A7F3D0" stroke="#059669" strokeWidth="2" />
-                  <text x="330" y="240" fontSize="11" fontWeight="bold" fill="#047857">Knee/Calf Pillow</text>
-                  <text x="333" y="252" fontSize="9" fontWeight="bold" fill="#059669">(Elevates venous blood)</text>
-
-                  {/* Angle Arc Indicator (35°–45°) */}
-                  <path d="M 130 228 A 65 65 0 0 1 180 178" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeDasharray="4 3" />
-                  <text x="145" y="205" fontSize="13" fontWeight="900" fill="#DC2626">35°–45°</text>
-
-                  {/* HUMAN SILHOUETTE */}
-                  {/* Head (Neutral cervical alignment, resting on top pillow) */}
-                  <ellipse cx="170" cy="95" rx="20" ry="22" fill="#FDE68A" stroke="#D97706" strokeWidth="2" />
-                  {/* Neck */}
-                  <path d="M 175 115 L 185 128" stroke="#F59E0B" strokeWidth="7" strokeLinecap="round" />
-
-                  {/* Elevated Torso Spine (35-45 deg) */}
-                  <path d="M 185 125 L 260 195" stroke="#6D28D9" strokeWidth="20" strokeLinecap="round" />
-
-                  {/* Arms resting comfortably on lap/side */}
-                  <path d="M 200 135 L 235 170 L 280 185" fill="none" stroke="#8B5CF6" strokeWidth="6" strokeLinecap="round" />
-
-                  {/* Pelvis / Hip sitting flat */}
-                  <circle cx="260" cy="195" r="12" fill="#5B21B6" />
-
-                  {/* Thigh (femur) angled up onto knee pillow */}
-                  <path d="M 260 195 L 350 180" stroke="#6D28D9" strokeWidth="18" strokeLinecap="round" />
-
-                  {/* Lower leg (tibia/calves) resting on pillow & sloping down */}
-                  <path d="M 350 180 L 435 205" stroke="#6D28D9" strokeWidth="15" strokeLinecap="round" />
-
-                  {/* Feet relaxed */}
-                  <path d="M 435 205 L 450 192" stroke="#6D28D9" strokeWidth="10" strokeLinecap="round" />
-
-                  {/* ANATOMICAL OVERLAY: STOMACH & ESOPHAGUS */}
-                  {/* Esophagus tube */}
-                  <path d="M 185 120 L 225 155" stroke="#FDA4AF" strokeWidth="5" strokeLinecap="round" />
-                  {/* Lower Esophageal Sphincter (LES) Valve Marker */}
-                  <circle cx="225" cy="155" r="5" fill="#10B981" stroke="#047857" strokeWidth="1.5" />
-                  {/* Stomach reservoir pouch */}
-                  <path d="M 225 155 Q 248 165 242 185 Q 225 190 215 175 Z" fill="#FCA5A5" stroke="#EF4444" strokeWidth="1.5" />
-                  {/* Acid pool at bottom of stomach */}
-                  <path d="M 218 178 Q 235 188 240 185 Q 228 190 218 178 Z" fill="#DC2626" opacity="0.9" />
-
-                  {/* Annotation: LES is well above acidic fluid pool */}
-                  <line x1="225" y1="155" x2="205" y2="135" stroke="#059669" strokeWidth="1.5" strokeDasharray="2 2" />
-                  <text x="140" y="132" fontSize="10" fontWeight="900" fill="#047857">LES Valve Closed (Safe Above Fluid)</text>
-
-                  {/* Venous Return Blood Flow Arrow */}
-                  <defs>
-                    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284C7" />
-                    </marker>
-                  </defs>
-                  <path d="M 420 175 Q 360 145 285 160" fill="none" stroke="#0284C7" strokeWidth="3" markerEnd="url(#arrow-cyan)" strokeDasharray="5 3" />
-                  <text x="295" y="145" fontSize="10" fontWeight="900" fill="#0369A1">
-                    Venous Return to Heart ➔
-                  </text>
-                </svg>
+        <div className="rounded-2xl bg-gradient-to-br from-violet-50/80 to-emerald-50/80 p-5 sm:p-7 clay-debossed space-y-6">
+          {/* Angle Simulator Slider Bar */}
+          <div className="rounded-2xl bg-white/95 p-4 shadow-sm border border-violet-100 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center font-black">
+                <Sliders className="w-4 h-4" />
               </div>
-
-              <div className="flex items-center gap-4 mt-2 text-[11px] font-bold text-violet-700">
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                  Acid pool kept below esophagus
+              <div>
+                <span className="text-[11px] font-black uppercase tracking-wider text-violet-900 block">
+                  Interactive Incline Simulator
                 </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span>
-                  Legs elevated for blood return
+                <span className="text-xs font-bold text-violet-700">
+                  Drag slider to see real-time esophageal barrier vs reflux risk
                 </span>
               </div>
             </div>
 
-            {/* Step-by-Step Setup Checklist */}
+            {/* Slider and Presets */}
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <input
+                type="range"
+                min="0"
+                max="55"
+                step="1"
+                value={simulatedAngle}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  setSimulatedAngle(val);
+                  if (val === 0 || val === 38 || val === 45) sound.playPop(700);
+                }}
+                className="w-full md:w-48 accent-violet-600 cursor-pointer"
+              />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  onClick={() => {
+                    sound.playPop(550);
+                    setSimulatedAngle(0);
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all ${
+                    simulatedAngle === 0
+                      ? 'bg-rose-600 text-white shadow-sm'
+                      : 'bg-rose-100 text-rose-900 hover:bg-rose-200'
+                  }`}
+                >
+                  0° Flat
+                </button>
+                <button
+                  onClick={() => {
+                    sound.playPop(800);
+                    setSimulatedAngle(38);
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all ${
+                    simulatedAngle === 38
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-emerald-100 text-emerald-900 hover:bg-emerald-200'
+                  }`}
+                >
+                  38° Golden
+                </button>
+                <button
+                  onClick={() => {
+                    sound.playPop(850);
+                    setSimulatedAngle(48);
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all ${
+                    simulatedAngle === 48
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-emerald-100 text-emerald-900 hover:bg-emerald-200'
+                  }`}
+                >
+                  48° Max
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            {/* Medically Accurate Anatomical SVG with Dynamic Tilt & Flow */}
+            <div className="w-full lg:w-7/12 flex flex-col items-center">
+              <div className="w-full max-w-lg bg-white/95 rounded-2xl p-4 shadow-sm border border-violet-100/90 relative overflow-hidden">
+                {/* Dynamic Status Header */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full transition-all ${
+                        isDangerAngle
+                          ? 'bg-rose-200 text-rose-950 animate-pulse'
+                          : isGoldenAngle
+                          ? 'bg-emerald-100 text-emerald-900'
+                          : 'bg-amber-100 text-amber-900'
+                      }`}
+                    >
+                      {isDangerAngle
+                        ? '⛔ ACID REFLUX DANGER (0°–25°)'
+                        : isGoldenAngle
+                        ? '✅ OPTIMAL ANTI-REFLUX & VENOUS FLOW'
+                        : '⚠️ HIGH ORTHOSTATIC WORKLOAD'}
+                    </span>
+                  </div>
+
+                  <span className="text-xs font-black text-violet-950 bg-violet-100 px-2.5 py-0.5 rounded-lg">
+                    Angle: {simulatedAngle}°
+                  </span>
+                </div>
+
+                <svg viewBox="0 0 520 290" className="w-full h-auto drop-shadow-sm select-none">
+                  <defs>
+                    {/* Animated Stream Pattern for Venous Flow */}
+                    <marker
+                      id="arrow-cyan-flow"
+                      viewBox="0 0 10 10"
+                      refX="5"
+                      refY="5"
+                      markerWidth="6"
+                      markerHeight="6"
+                      orient="auto-start-reverse"
+                    >
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284C7" />
+                    </marker>
+
+                    {/* Acid Gradient */}
+                    <linearGradient id="acidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#EF4444" stopOpacity="0.9" />
+                      <stop offset="100%" stopColor="#B91C1C" stopOpacity="1" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Bed Frame & Soft Mattress */}
+                  <line x1="30" y1="245" x2="490" y2="245" stroke="#CBD5E1" strokeWidth="6" strokeLinecap="round" />
+                  <rect x="40" y="233" width="440" height="12" rx="4" fill="#E2E8F0" />
+
+                  {/* Dynamic Pillow Stack that adapts to angle */}
+                  <polygon
+                    points={`70,233 ${70 + simulatedAngle * 2.8},${233 - simulatedAngle * 2.2} ${
+                      100 + simulatedAngle * 2.6
+                    },${233 - simulatedAngle * 1.5} 120,233`}
+                    fill="#DDD6FE"
+                    stroke="#8B5CF6"
+                    strokeWidth="1.5"
+                    className="transition-all duration-300"
+                  />
+                  <ellipse
+                    cx="375"
+                    cy="212"
+                    rx="36"
+                    ry="15"
+                    fill="#A7F3D0"
+                    stroke="#059669"
+                    strokeWidth="2"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      sound.playPop(750);
+                      setActivePin('calves');
+                    }}
+                  />
+
+                  {/* Angle Protractor Visualizer Arc */}
+                  <path
+                    d={`M 150 233 A 60 60 0 0 1 ${
+                      150 + 60 * Math.cos((simulatedAngle * Math.PI) / 180)
+                    } ${233 - 60 * Math.sin((simulatedAngle * Math.PI) / 180)}`}
+                    fill="none"
+                    stroke={isDangerAngle ? '#EF4444' : isGoldenAngle ? '#10B981' : '#F59E0B'}
+                    strokeWidth="3"
+                    strokeDasharray="4 3"
+                  />
+                  <text
+                    x="165"
+                    y="225"
+                    fontSize="13"
+                    fontWeight="900"
+                    fill={isDangerAngle ? '#DC2626' : isGoldenAngle ? '#047857' : '#D97706'}
+                  >
+                    {simulatedAngle}°
+                  </text>
+
+                  {/* Dynamic Torso Group Rotating around Hip (Center: 260, 205) */}
+                  <g
+                    transform={`rotate(${-(simulatedAngle - 38) * 0.8}, 260, 205)`}
+                    className="transition-transform duration-300 ease-out"
+                  >
+                    {/* Head Resting on Upper Pillows */}
+                    <ellipse cx="170" cy="100" rx="20" ry="22" fill="#FDE68A" stroke="#D97706" strokeWidth="2" />
+                    <circle cx="164" cy="98" r="2.5" fill="#78350F" />
+                    <path d="M 160 108 Q 166 114 172 108" fill="none" stroke="#78350F" strokeWidth="1.5" />
+
+                    {/* Torso Spine */}
+                    <path d="M 185 130 L 260 205" stroke="#6D28D9" strokeWidth="20" strokeLinecap="round" />
+
+                    {/* Esophagus Tube */}
+                    <path
+                      d="M 185 125 L 225 160"
+                      stroke={isDangerAngle ? '#F87171' : '#FDA4AF'}
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+
+                    {/* Lower Esophageal Sphincter (LES) Valve Marker */}
+                    <circle
+                      cx="225"
+                      cy="160"
+                      r="7"
+                      fill={isDangerAngle ? '#EF4444' : '#10B981'}
+                      stroke="#FFFFFF"
+                      strokeWidth="2"
+                      className={isDangerAngle ? 'animate-beacon-pulse' : ''}
+                      onClick={() => {
+                        sound.playPop(850);
+                        setActivePin('les');
+                      }}
+                    />
+
+                    {/* Stomach Pouch */}
+                    <path
+                      d="M 225 160 Q 252 175 245 198 Q 225 202 215 185 Z"
+                      fill="#FCA5A5"
+                      stroke="#EF4444"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Gastric Acid Fluid Pool */}
+                    {isDangerAngle ? (
+                      /* Danger: Acid overflowing upward into esophagus */
+                      <g className="animate-pulse">
+                        <path
+                          d="M 195 135 L 225 160 Q 252 175 245 198 Q 225 202 215 185 Z"
+                          fill="url(#acidGrad)"
+                          opacity="0.95"
+                        />
+                        <text x="110" y="145" fontSize="10" fontWeight="900" fill="#DC2626">
+                          ⚠️ Acid Spill into Throat!
+                        </text>
+                      </g>
+                    ) : (
+                      /* Safe: Acid pooled safely at bottom away from LES */
+                      <path
+                        d="M 218 185 Q 235 198 245 198 Q 228 202 218 185 Z"
+                        fill="url(#acidGrad)"
+                        opacity="0.95"
+                        className="animate-wave-sway"
+                      />
+                    )}
+
+                    {/* Arm Resting Calmly */}
+                    <path
+                      d="M 195 140 L 230 178 L 275 195"
+                      fill="none"
+                      stroke="#8B5CF6"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                  </g>
+
+                  {/* Lower Body: Hips & Calves (Stationary) */}
+                  <circle cx="260" cy="205" r="12" fill="#5B21B6" />
+                  {/* Thigh */}
+                  <path d="M 260 205 L 355 190" stroke="#6D28D9" strokeWidth="18" strokeLinecap="round" />
+                  {/* Calves resting on Pillow */}
+                  <path d="M 355 190 L 440 215" stroke="#6D28D9" strokeWidth="15" strokeLinecap="round" />
+                  {/* Feet */}
+                  <path d="M 440 215 L 455 202" stroke="#6D28D9" strokeWidth="10" strokeLinecap="round" />
+
+                  {/* ANIMATED VENOUS RETURN STREAM (Inspo style live dashed flow) */}
+                  <path
+                    d="M 430 185 Q 360 150 280 170"
+                    fill="none"
+                    stroke="#0284C7"
+                    strokeWidth="3.5"
+                    strokeDasharray="8 5"
+                    markerEnd="url(#arrow-cyan-flow)"
+                    className="animate-flow-dash"
+                  />
+                  <text x="310" y="150" fontSize="10" fontWeight="900" fill="#0369A1">
+                    Venous Return to Heart (IVC)
+                  </text>
+
+                  {/* INTERACTIVE INSPECTION PINS (Inspo Lab Style) */}
+                  {/* Pin 1: Pillow Ramp */}
+                  <g
+                    className="cursor-pointer"
+                    onClick={() => {
+                      sound.playPop(700);
+                      setActivePin('pillows');
+                    }}
+                  >
+                    <circle cx="95" cy="190" r="11" fill="#8B5CF6" opacity="0.2" className="animate-beacon-pulse" />
+                    <circle cx="95" cy="190" r="7" fill="#7C3AED" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <text x="92" y="193" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                      1
+                    </text>
+                  </g>
+
+                  {/* Pin 2: LES Valve */}
+                  <g
+                    className="cursor-pointer"
+                    onClick={() => {
+                      sound.playPop(750);
+                      setActivePin('les');
+                    }}
+                  >
+                    <circle cx="230" cy="148" r="11" fill="#10B981" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="230" cy="148" r="7" fill="#059669" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <text x="227" y="151" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                      2
+                    </text>
+                  </g>
+
+                  {/* Pin 3: Stomach Fluid */}
+                  <g
+                    className="cursor-pointer"
+                    onClick={() => {
+                      sound.playPop(800);
+                      setActivePin('stomach');
+                    }}
+                  >
+                    <circle cx="255" cy="195" r="11" fill="#EF4444" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="255" cy="195" r="7" fill="#DC2626" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <text x="252" y="198" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                      3
+                    </text>
+                  </g>
+
+                  {/* Pin 4: Calf Pump */}
+                  <g
+                    className="cursor-pointer"
+                    onClick={() => {
+                      sound.playPop(850);
+                      setActivePin('calves');
+                    }}
+                  >
+                    <circle cx="395" cy="210" r="11" fill="#0284C7" opacity="0.25" className="animate-beacon-pulse" />
+                    <circle cx="395" cy="210" r="7" fill="#0284C7" stroke="#FFFFFF" strokeWidth="1.5" />
+                    <text x="392" y="213" fontSize="9" fontWeight="900" fill="#FFFFFF">
+                      4
+                    </text>
+                  </g>
+                </svg>
+
+                {/* Hotspot Inspection Tray (Inspo Motion Lab Pattern) */}
+                <div className="mt-3 p-3 rounded-xl bg-violet-50/90 border border-violet-200/80 text-xs font-bold text-violet-950 transition-all flex items-start gap-2.5">
+                  <div className="w-5 h-5 rounded-md bg-violet-600 text-white font-black text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+                    {activePin === 'pillows'
+                      ? '1'
+                      : activePin === 'les'
+                      ? '2'
+                      : activePin === 'stomach'
+                      ? '3'
+                      : '4'}
+                  </div>
+                  <div>
+                    {activePin === 'pillows' && (
+                      <p>
+                        <strong>Thoracic Ramp:</strong> 2 to 3 pillows stacked in a continuous stair-step wedge. Elevates the whole chest to maintain the 35°–45° gravity barrier.
+                      </p>
+                    )}
+                    {activePin === 'les' && (
+                      <p>
+                        <strong>Lower Esophageal Sphincter (LES):</strong> Sits safely above the gastric fluid level at &ge;32° incline. Prevents acid reflux while relaxing without closing the airway.
+                      </p>
+                    )}
+                    {activePin === 'stomach' && (
+                      <p>
+                        <strong>Gastric Acid Chyme:</strong> 700g of sinigang broth, tamarind acid (pH 2.0), rice, and chicken liver settles in the lower gastric antrum away from the throat.
+                      </p>
+                    )}
+                    {activePin === 'calves' && (
+                      <p>
+                        <strong>Calf & Knee Elevation:</strong> Knees bent at 25° over a folded pillow shifts 300–500 mL of pooled venous blood back to the central venous pool, banishing dizziness.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pin Selection Pills */}
+              <div className="flex items-center gap-2 mt-2 flex-wrap justify-center">
+                <span className="text-[10px] font-black uppercase text-violet-700">Tap Hotspot:</span>
+                <button
+                  onClick={() => {
+                    sound.playPop(700);
+                    setActivePin('pillows');
+                  }}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
+                    activePin === 'pillows' ? 'bg-violet-600 text-white' : 'bg-white text-violet-800'
+                  }`}
+                >
+                  1. Pillows Ramp
+                </button>
+                <button
+                  onClick={() => {
+                    sound.playPop(750);
+                    setActivePin('les');
+                  }}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
+                    activePin === 'les' ? 'bg-emerald-600 text-white' : 'bg-white text-emerald-800'
+                  }`}
+                >
+                  2. LES Valve
+                </button>
+                <button
+                  onClick={() => {
+                    sound.playPop(800);
+                    setActivePin('stomach');
+                  }}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
+                    activePin === 'stomach' ? 'bg-rose-600 text-white' : 'bg-white text-rose-800'
+                  }`}
+                >
+                  3. Gastric Pool
+                </button>
+                <button
+                  onClick={() => {
+                    sound.playPop(850);
+                    setActivePin('calves');
+                  }}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-black clay-btn ${
+                    activePin === 'calves' ? 'bg-sky-600 text-white' : 'bg-white text-sky-800'
+                  }`}
+                >
+                  4. Calf Pump
+                </button>
+              </div>
+            </div>
+
+            {/* Checklist details & Clinical Rationale */}
             <div className="w-full lg:w-5/12 space-y-3.5">
               <div className="space-y-1">
                 <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
@@ -240,7 +588,7 @@ export const PostureVisualizer: React.FC = () => {
               </div>
 
               <div className="space-y-2.5">
-                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5">
+                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5 hover:scale-[1.02] transition-transform">
                   <div className="w-6 h-6 rounded-lg bg-violet-100 text-violet-950 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     1
                   </div>
@@ -252,7 +600,7 @@ export const PostureVisualizer: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5">
+                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5 hover:scale-[1.02] transition-transform">
                   <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-950 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     2
                   </div>
@@ -264,7 +612,7 @@ export const PostureVisualizer: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5">
+                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5 hover:scale-[1.02] transition-transform">
                   <div className="w-6 h-6 rounded-lg bg-sky-100 text-sky-950 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     3
                   </div>
@@ -285,76 +633,150 @@ export const PostureVisualizer: React.FC = () => {
         </div>
       )}
 
-      {/* POSTURE 2: LEFT-LATERAL DECUBITUS */}
+      {/* POSTURE 2: LEFT-LATERAL DECUBITUS WITH SIDE COMPARISON */}
       {selectedPosture === 'left-lateral' && (
-        <div className="rounded-2xl bg-gradient-to-br from-violet-50/70 to-sky-50/70 p-5 sm:p-7 clay-debossed space-y-6">
+        <div className="rounded-2xl bg-gradient-to-br from-violet-50/80 to-sky-50/80 p-5 sm:p-7 clay-debossed space-y-6">
+          {/* Side Comparison Toggle */}
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full">
+                Anatomical Orientation Toggle
+              </span>
+              <h4 className="text-sm sm:text-base font-black text-violet-950 mt-1">
+                Compare Left Side vs Right Side Physics:
+              </h4>
+            </div>
+
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-sky-100/80 clay-debossed">
+              <button
+                onClick={() => {
+                  sound.playPop(750);
+                  setLeftLateralView('left');
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                  leftLateralView === 'left'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-sky-900 hover:text-sky-950'
+                }`}
+              >
+                ✅ Left Side (Recommended)
+              </button>
+              <button
+                onClick={() => {
+                  sound.playPop(600);
+                  setLeftLateralView('right');
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                  leftLateralView === 'right'
+                    ? 'bg-rose-600 text-white shadow-sm'
+                    : 'text-rose-900 hover:text-rose-950'
+                }`}
+              >
+                ❌ Right Side (Reflux Trap)
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col lg:flex-row items-center gap-6">
-            {/* SVG Diagram: Left Lateral Recovery Anatomy */}
+            {/* SVG Diagram: Left Lateral vs Right Lateral */}
             <div className="w-full lg:w-7/12 flex flex-col items-center">
-              <div className="w-full max-w-md bg-white/90 rounded-2xl p-4 shadow-sm border border-violet-100/80">
+              <div className="w-full max-w-lg bg-white/95 rounded-2xl p-4 shadow-sm border border-violet-100/80">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-black uppercase tracking-wider text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full">
-                    ANTI-NAUSEA / REST POSTURE
+                  <span
+                    className={`text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                      leftLateralView === 'left' ? 'bg-sky-100 text-sky-900' : 'bg-rose-100 text-rose-900'
+                    }`}
+                  >
+                    {leftLateralView === 'left' ? 'LEFT LATERAL DECUBITUS' : 'RIGHT LATERAL DECUBITUS (UNSAFE)'}
                   </span>
                   <span className="text-[11px] font-black text-violet-900">
-                    Left Decubitus + Head Propped
+                    {leftLateralView === 'left' ? 'Greater Curvature Down' : 'LES Submerged in Acid'}
                   </span>
                 </div>
 
-                <svg viewBox="0 0 500 280" className="w-full h-auto drop-shadow-sm select-none">
+                <svg viewBox="0 0 520 280" className="w-full h-auto drop-shadow-sm select-none">
                   {/* Bed Surface */}
-                  <line x1="30" y1="240" x2="470" y2="240" stroke="#CBD5E1" strokeWidth="6" strokeLinecap="round" />
-                  <rect x="40" y="228" width="420" height="12" rx="4" fill="#E2E8F0" />
+                  <line x1="30" y1="240" x2="490" y2="240" stroke="#CBD5E1" strokeWidth="6" strokeLinecap="round" />
+                  <rect x="40" y="228" width="440" height="12" rx="4" fill="#E2E8F0" />
 
-                  {/* 2 Head Pillows for Left Lateral (15° Incline) */}
+                  {/* 2 Head Pillows */}
                   <ellipse cx="110" cy="180" rx="35" ry="16" fill="#DDD6FE" stroke="#8B5CF6" strokeWidth="1.5" />
                   <ellipse cx="115" cy="162" rx="30" ry="14" fill="#C4B5FD" stroke="#7C3AED" strokeWidth="1.5" />
-                  <text x="75" y="135" fontSize="10" fontWeight="bold" fill="#5B21B6">2 Head Pillows (15°+)</text>
+                  <text x="75" y="135" fontSize="10" fontWeight="bold" fill="#5B21B6">
+                    2 Head Pillows (15°+)
+                  </text>
 
                   {/* Pillow between knees */}
-                  <ellipse cx="370" cy="205" rx="20" ry="12" fill="#A7F3D0" stroke="#059669" strokeWidth="2" />
-                  <text x="325" y="245" fontSize="10" fontWeight="bold" fill="#047857">Pillow Between Knees</text>
+                  <ellipse cx="370" cy="205" rx="22" ry="13" fill="#A7F3D0" stroke="#059669" strokeWidth="2" />
+                  <text x="320" y="245" fontSize="10" fontWeight="bold" fill="#047857">
+                    Pillow Between Knees
+                  </text>
 
-                  {/* Patient on Left Side */}
-                  {/* Head turned on side */}
+                  {/* Patient Silhouette on side */}
                   <circle cx="120" cy="145" r="18" fill="#FDE68A" stroke="#D97706" strokeWidth="2" />
-
-                  {/* Torso lying on left side */}
                   <path d="M 135 155 L 290 195" stroke="#6D28D9" strokeWidth="20" strokeLinecap="round" />
-
-                  {/* Left arm extended out/under pillow */}
                   <path d="M 145 165 L 180 185" stroke="#8B5CF6" strokeWidth="6" strokeLinecap="round" />
-
-                  {/* Knees flexed forward (Sims recovery position) */}
-                  {/* Thighs */}
                   <path d="M 290 195 L 360 185" stroke="#6D28D9" strokeWidth="16" strokeLinecap="round" />
-                  {/* Lower legs bent forward */}
                   <path d="M 360 185 L 390 220" stroke="#6D28D9" strokeWidth="14" strokeLinecap="round" />
 
-                  {/* ANATOMICAL STOMACH BASIN (Left side is down) */}
-                  {/* On left lateral, the Greater Curvature is dependent at the bottom */}
-                  {/* Esophagus enters from above right */}
-                  <path d="M 175 160 L 210 178" stroke="#FDA4AF" strokeWidth="5" strokeLinecap="round" />
-
-                  {/* Stomach contour: Big curvature sits down on bed side */}
-                  <path d="M 210 178 Q 220 215 255 210 Q 275 195 245 175 Z" fill="#FCA5A5" stroke="#EF4444" strokeWidth="2" />
-
-                  {/* Chyme fluid pooling at the deepest part of greater curvature (gravity sink) */}
-                  <path d="M 220 200 Q 240 218 255 210 Q 260 200 230 195 Z" fill="#DC2626" opacity="0.9" />
-
-                  {/* LES marker - ABOVE the pool */}
-                  <circle cx="210" cy="178" r="5" fill="#10B981" stroke="#047857" strokeWidth="1.5" />
-                  <text x="175" y="195" fontSize="10" fontWeight="900" fill="#047857">LES is Higher ⬆</text>
-
-                  {/* Graphic Arrow showing Gravity trapping acid */}
-                  <line x1="240" y1="165" x2="240" y2="190" stroke="#EF4444" strokeWidth="2" markerEnd="url(#arrow-red)" />
-                  <text x="250" y="178" fontSize="9" fontWeight="900" fill="#B91C1C">Acid Pooled in Greater Curvature Sump</text>
-
-                  <defs>
-                    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#EF4444" />
-                    </marker>
-                  </defs>
+                  {leftLateralView === 'left' ? (
+                    /* LEFT SIDE ANATOMY: Stomach bowl at bottom */
+                    <g>
+                      {/* Esophagus entering from top */}
+                      <path d="M 175 160 L 210 178" stroke="#FDA4AF" strokeWidth="5" strokeLinecap="round" />
+                      {/* Stomach Contour with deep greater curvature pool */}
+                      <path
+                        d="M 210 178 Q 220 215 255 210 Q 275 195 245 175 Z"
+                        fill="#FCA5A5"
+                        stroke="#EF4444"
+                        strokeWidth="2"
+                      />
+                      {/* Acid trapped in bowl */}
+                      <path
+                        d="M 220 200 Q 240 218 255 210 Q 260 200 230 195 Z"
+                        fill="#DC2626"
+                        opacity="0.9"
+                        className="animate-wave-sway"
+                      />
+                      {/* Safe LES */}
+                      <circle cx="210" cy="178" r="6" fill="#10B981" stroke="#FFFFFF" strokeWidth="1.5" />
+                      <text x="165" y="198" fontSize="10" fontWeight="900" fill="#047857">
+                        LES Higher (Guarded)
+                      </text>
+                      <line
+                        x1="240"
+                        y1="165"
+                        x2="240"
+                        y2="190"
+                        stroke="#EF4444"
+                        strokeWidth="2"
+                        className="animate-flow-dash"
+                      />
+                      <text x="248" y="178" fontSize="9" fontWeight="900" fill="#B91C1C">
+                        Acid Trapped by Gravity
+                      </text>
+                    </g>
+                  ) : (
+                    /* RIGHT SIDE ANATOMY: Stomach upside down, acid overflows into esophagus */
+                    <g className="animate-pulse">
+                      <path d="M 175 185 L 210 170" stroke="#EF4444" strokeWidth="6" strokeLinecap="round" />
+                      <path
+                        d="M 210 170 Q 245 155 270 175 Q 260 200 220 185 Z"
+                        fill="#FCA5A5"
+                        stroke="#EF4444"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M 175 185 L 230 170 Q 260 170 245 195 Z"
+                        fill="#DC2626"
+                        opacity="0.95"
+                      />
+                      <circle cx="210" cy="170" r="6" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
+                      <text x="110" y="180" fontSize="11" fontWeight="900" fill="#DC2626">
+                        ⛔ Acid Flooding Esophagus!
+                      </text>
+                    </g>
+                  )}
                 </svg>
               </div>
 
@@ -382,7 +804,7 @@ export const PostureVisualizer: React.FC = () => {
               </div>
 
               <div className="space-y-2.5">
-                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5">
+                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5 hover:scale-[1.02] transition-transform">
                   <div className="w-6 h-6 rounded-lg bg-sky-100 text-sky-950 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     ✓
                   </div>
@@ -394,7 +816,7 @@ export const PostureVisualizer: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5">
+                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5 hover:scale-[1.02] transition-transform">
                   <div className="w-6 h-6 rounded-lg bg-sky-100 text-sky-950 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     ✓
                   </div>
@@ -406,7 +828,7 @@ export const PostureVisualizer: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5">
+                <div className="rounded-xl bg-white/90 p-3 shadow-clay-pill flex items-start gap-2.5 hover:scale-[1.02] transition-transform">
                   <div className="w-6 h-6 rounded-lg bg-sky-100 text-sky-950 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     ✓
                   </div>
@@ -446,7 +868,7 @@ export const PostureVisualizer: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Card 1: Flat Supine */}
-            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3">
+            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-rose-700 uppercase">Hazard 1</span>
                 <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-[10px]">
@@ -460,7 +882,7 @@ export const PostureVisualizer: React.FC = () => {
             </div>
 
             {/* Card 2: Trendelenburg (Head Down / Legs High) */}
-            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3">
+            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-rose-700 uppercase">Hazard 2</span>
                 <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-[10px]">
@@ -475,7 +897,7 @@ export const PostureVisualizer: React.FC = () => {
             </div>
 
             {/* Card 3: Right-Lateral Position */}
-            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3">
+            <div className="rounded-2xl bg-white/95 p-4.5 shadow-clay-card border-2 border-rose-200 space-y-3 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-rose-700 uppercase">Hazard 3</span>
                 <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-black text-[10px]">
@@ -498,7 +920,7 @@ export const PostureVisualizer: React.FC = () => {
                 sound.playPop(700);
                 setSelectedPosture('fowlers');
               }}
-              className="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-black text-xs hover:bg-rose-700 shadow-sm flex items-center gap-1 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-black text-xs hover:bg-rose-700 shadow-sm flex items-center gap-1 transition-all clay-btn"
             >
               <span>Back to Fowler's</span>
               <ChevronRight className="w-3.5 h-3.5" />

@@ -2,17 +2,11 @@ import React, { useState } from 'react';
 import {
   Compass,
   ArrowRight,
-  ArrowDown,
   ShieldAlert,
-  Clock,
-  Droplet,
-  Activity,
-  Wind,
-  CheckCircle2,
-  Sparkles,
-  Layers,
-  ChevronRight,
   Code2,
+  ChevronRight,
+  Sparkles,
+  Layers
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { MermaidDiagram } from './MermaidDiagram';
@@ -120,14 +114,14 @@ const PHASES: WorkflowPhase[] = [
       },
       {
         code: 'B2',
-        title: 'Intestinal Fluid Transfer',
-        detail: 'Small volumes absorb smoothly across jejunal mucosa directly into circulatory plasma.',
-        icon: '🔬',
+        title: 'Jejunal Osmotic Transfer',
+        detail: 'Gut safely absorbs fluid and electrolytes into blood plasma at 288 mOsm without digestive strain.',
+        icon: '⚡',
       },
       {
         code: 'B3',
-        title: '2nd Garmin Vitals Snapshot',
-        detail: 'Check watch snapshot to confirm heart rate trend (< 85 bpm) and rising HRV.',
+        title: 'Garmin Vitals Check',
+        detail: 'Check watch for heart rate settling toward < 80 bpm and HRV upward trend before attempting to sit.',
         icon: '⌚',
       },
     ],
@@ -136,31 +130,30 @@ const PHASES: WorkflowPhase[] = [
     id: 3,
     timeWindow: '60+ Mins',
     name: 'Phase 3: Staged Mobilization',
-    tagline: 'Orthostatic Anti-Syncope Clearance',
+    tagline: 'Orthostatic Blood Redistribution',
     colorClass: 'bg-emerald-100/90',
     shadowClass: 'shadow-clay-mint',
     badgeClass: 'bg-emerald-200 text-emerald-950',
     borderAccent: 'border-emerald-300',
-    objective: 'Safely transition from reclined recovery to vertical standing without blood pooling drop or presyncope.',
+    objective: 'Safely transition from reclining to standing without orthostatic hypotension or recurrence of presyncope.',
     steps: [
       {
         code: 'C1',
         title: '15x Seated Ankle Pumps',
-        detail: 'Sit upright with back supported and pump ankles 15 times to activate calf muscle blood pump.',
+        detail: 'Contract calf muscles vigorously 15 times to manually pump pooled blood upward into the IVC.',
         icon: '🦶',
       },
       {
         code: 'C2',
-        title: '60-Second Edge-of-Bed Pause',
-        detail: 'Pause with feet dangling over the edge of the bed for a full minute to let baroreceptors calibrate.',
-        icon: '⏱️',
+        title: '60s Edge-of-Bed Pause',
+        detail: 'Sit with feet dangling for a full 60 seconds. Let the autonomic baroreceptors adjust vascular tone.',
+        icon: '⏳',
       },
       {
         code: 'C3',
-        title: 'Slow Controlled Rise to Stand',
-        detail: 'Rise slowly with hand support. If zero lightheadedness, tunnel vision, or nausea, safe walking cleared.',
-        icon: '🚶‍♀️',
-        safetyNote: 'Sit down immediately if dizzy',
+        title: 'Gradual Rise to Stand',
+        detail: 'Rise slowly with hand support on bedframe. If any lightheadedness occurs, immediately re-seat.',
+        icon: '🧍',
       },
     ],
   },
@@ -171,12 +164,12 @@ export const VisualRecoveryWorkflow: React.FC = () => {
   const [viewMode, setViewMode] = useState<'visual' | 'mermaid'>('visual');
 
   return (
-    <div className="rounded-[36px] bg-white/95 p-6 sm:p-8 shadow-clay-card border-none space-y-6">
-      {/* Workflow Section Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-violet-100">
+    <div className="rounded-[32px] bg-white/90 p-5 sm:p-8 shadow-clay-card border-none space-y-6">
+      {/* Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="w-8 h-8 rounded-xl bg-violet-200 shadow-clay-lavender flex items-center justify-center text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-8 h-8 rounded-xl bg-violet-200 text-violet-900 flex items-center justify-center text-sm shadow-clay-pill">
               🧭
             </span>
             <h3 className="text-lg sm:text-xl font-black text-clay-indigo-dark">
@@ -184,7 +177,7 @@ export const VisualRecoveryWorkflow: React.FC = () => {
             </h3>
           </div>
           <p className="text-xs sm:text-sm font-semibold text-violet-700/80">
-            Chronological 3-phase clinical protocol for post-match hypovolemia and anti-reflux stabilization
+            Chronological 3-phase clinical protocol with animated progress conduit and sub-step inspection
           </p>
         </div>
 
@@ -195,7 +188,7 @@ export const VisualRecoveryWorkflow: React.FC = () => {
               sound.playPop(700);
               setViewMode('visual');
             }}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn ${
               viewMode === 'visual'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
@@ -208,7 +201,7 @@ export const VisualRecoveryWorkflow: React.FC = () => {
               sound.playPop(750);
               setViewMode('mermaid');
             }}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer clay-btn ${
               viewMode === 'mermaid'
                 ? 'bg-white text-violet-950 shadow-clay-pill'
                 : 'text-violet-700 hover:text-violet-950'
@@ -229,6 +222,36 @@ export const VisualRecoveryWorkflow: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-6">
+          {/* Timeline Connector SVG (Animated Conduit from inspo.gapmondragon.dev) */}
+          <div className="hidden md:block px-6">
+            <svg viewBox="0 0 800 24" className="w-full h-6 select-none overflow-visible">
+              <defs>
+                <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#8B5CF6" />
+                  <stop offset="50%" stopColor="#0EA5E9" />
+                  <stop offset="100%" stopColor="#10B981" />
+                </linearGradient>
+              </defs>
+              {/* Background Conduit Track */}
+              <line x1="80" y1="12" x2="720" y2="12" stroke="#E2E8F0" strokeWidth="6" strokeLinecap="round" />
+              {/* Active Animated Conduit Beam */}
+              <line
+                x1="80"
+                y1="12"
+                x2={activePhaseId === 1 ? '380' : activePhaseId === 2 ? '680' : '720'}
+                stroke="url(#beamGrad)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="8 6"
+                className="animate-flow-dash transition-all duration-500"
+              />
+              {/* Node Indicators */}
+              <circle cx="120" cy="12" r="7" fill={activePhaseId >= 1 ? '#8B5CF6' : '#CBD5E1'} stroke="#FFFFFF" strokeWidth="2" />
+              <circle cx="400" cy="12" r="7" fill={activePhaseId >= 2 ? '#0EA5E9' : '#CBD5E1'} stroke="#FFFFFF" strokeWidth="2" />
+              <circle cx="680" cy="12" r="7" fill={activePhaseId >= 3 ? '#10B981' : '#CBD5E1'} stroke="#FFFFFF" strokeWidth="2" />
+            </svg>
+          </div>
+
           {/* Phase Sequence Bar (Overview Stepper) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {PHASES.map((phase) => (
@@ -238,7 +261,7 @@ export const VisualRecoveryWorkflow: React.FC = () => {
                   sound.playPop(650 + phase.id * 60);
                   setActivePhaseId(phase.id);
                 }}
-                className={`text-left p-4 rounded-2xl transition-all cursor-pointer select-none flex flex-col justify-between ${
+                className={`text-left p-4 rounded-2xl transition-all cursor-pointer select-none flex flex-col justify-between clay-btn ${
                   activePhaseId === phase.id
                     ? `${phase.colorClass} ${phase.shadowClass} scale-102 ring-2 ring-violet-400`
                     : 'bg-white/70 hover:bg-white text-violet-900 shadow-clay-pill opacity-75'
@@ -249,7 +272,9 @@ export const VisualRecoveryWorkflow: React.FC = () => {
                     <span className="text-xs font-black uppercase tracking-wider text-violet-950">
                       Phase {phase.id}
                     </span>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shadow-clay-pill ${phase.badgeClass}`}>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shadow-clay-pill ${phase.badgeClass}`}
+                    >
                       {phase.timeWindow}
                     </span>
                   </div>
@@ -272,17 +297,19 @@ export const VisualRecoveryWorkflow: React.FC = () => {
           {(() => {
             const current = PHASES.find((p) => p.id === activePhaseId) || PHASES[0];
             return (
-              <div className={`rounded-3xl ${current.colorClass} ${current.shadowClass} p-6 sm:p-8 space-y-6 animate-scale-up border-none`}>
+              <div
+                className={`rounded-3xl ${current.colorClass} ${current.shadowClass} p-6 sm:p-8 space-y-6 animate-scale-up border-none`}
+              >
                 {/* Active Phase Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/5 pb-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase shadow-clay-pill ${current.badgeClass}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-black uppercase shadow-clay-pill ${current.badgeClass}`}
+                      >
                         {current.timeWindow}
                       </span>
-                      <h4 className="text-lg sm:text-xl font-black text-violet-950">
-                        {current.name}
-                      </h4>
+                      <h4 className="text-lg sm:text-xl font-black text-violet-950">{current.name}</h4>
                     </div>
                     <p className="text-xs sm:text-sm font-bold text-violet-900/80 max-w-xl">
                       {current.objective}
@@ -298,10 +325,10 @@ export const VisualRecoveryWorkflow: React.FC = () => {
 
                 {/* Flow Sequence Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {current.steps.map((step, idx) => (
+                  {current.steps.map((step) => (
                     <div
                       key={step.code}
-                      className="rounded-2xl bg-white/90 p-5 shadow-clay-card flex flex-col justify-between space-y-3 relative group"
+                      className="rounded-2xl bg-white/95 p-5 shadow-clay-card hover:shadow-clay-card-hover flex flex-col justify-between space-y-3 relative group transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
@@ -335,8 +362,10 @@ export const VisualRecoveryWorkflow: React.FC = () => {
                 {/* Phase Transition Indicator */}
                 <div className="flex items-center justify-between pt-2 text-xs font-bold text-violet-900/70">
                   <span>
-                    {current.id === 1 && 'Next: Proceed to Phase 2 (Pocari Sweat Micro-Hydration) after 45 mins.'}
-                    {current.id === 2 && 'Next: Proceed to Phase 3 (Orthostatic Mobilization) once gut absorption stabilizes.'}
+                    {current.id === 1 &&
+                      'Next: Proceed to Phase 2 (Pocari Sweat Micro-Hydration) after 45 mins.'}
+                    {current.id === 2 &&
+                      'Next: Proceed to Phase 3 (Orthostatic Mobilization) once gut absorption stabilizes.'}
                     {current.id === 3 && 'Final: Mobilization complete. Continue resting in cool environment.'}
                   </span>
                   <div className="flex items-center gap-2">
@@ -346,7 +375,7 @@ export const VisualRecoveryWorkflow: React.FC = () => {
                           sound.playPop(750);
                           setActivePhaseId(current.id + 1);
                         }}
-                        className="clay-btn bg-white/90 text-violet-950 px-3 py-1.5 text-xs shadow-clay-pill flex items-center gap-1 hover:bg-white"
+                        className="clay-btn bg-white/90 text-violet-950 px-3.5 py-2 text-xs shadow-clay-pill flex items-center gap-1.5 hover:bg-white"
                       >
                         <span>Phase {current.id + 1}</span>
                         <ArrowRight className="w-3.5 h-3.5" />
